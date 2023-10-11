@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { request } from "../request.js";
+import { requestFactory } from "../request.js";
 import { Button, Card, Placeholder } from "react-bootstrap";
 
+const request = requestFactory();
 
 export default function Details() {
     const { id } = useParams();
@@ -10,7 +11,7 @@ export default function Details() {
     const [product, setProduct] = useState();
 
     useEffect(() => {
-        request(`/data/products/${id}`)
+        request.get(`/data/products/${id}`)
             .then(product => setProduct(product));
     }, []);
     

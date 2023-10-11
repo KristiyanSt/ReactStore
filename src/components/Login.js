@@ -8,7 +8,7 @@ import { useContext } from "react";
 
 export default function Login() {
     const { onLogin } = useContext(AuthContext);
-    const {  values, onChange, formHandler } = useForm({ email: "", password: "" }, onLogin);
+    const { values, onChange, formHandler } = useForm({ email: "", password: "" }, onLogin);
 
     return (
         <div>

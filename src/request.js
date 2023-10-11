@@ -1,17 +1,17 @@
 const host = 'http://localhost:3030'
 
-export async function request(url, body, method, token) {
+async function request(method, url, body, token) {
     const options = {};
-
+    options.method = method;
+    options.headers = {};
+    
+    if(token) {
+        options.headers['x-authorization'] = token;
+    }
     if(body) {
-        options.method = method;
-
-        options.headers = {};
         options.headers['content-type'] = 'application/json';
         
-        if(token) {
-            options.headers['x-authorization'] = token;
-        }
+        
         options.body = JSON.stringify(body);
     }
 
@@ -22,4 +22,13 @@ export async function request(url, body, method, token) {
     }
 
     return result.json();
+}
+
+export function requestFactory() {
+    return {
+        get: request.bind(null, 'get'),
+        post: request.bind(null,'post'),
+        create: request.bind(null,'create'),
+        delete: request.bind(null,'delete')
+    }
 }

@@ -1,18 +1,20 @@
 import { Button, Form } from "react-bootstrap";
-import useForm from "../hooks/useForm.js";
-import { request } from "../request.js";
 import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext.js";
-import useProducts from "../hooks/useProducts.js";
 import { useNavigate } from "react-router-dom";
+import useForm from "../hooks/useForm.js";
+import { requestFactory } from "../request.js";
+import { AuthContext } from "../contexts/AuthContext.js";
+import { ProductsContext } from "../contexts/ProductsCtx.js";
+
+const request = requestFactory();
 
 export default function Create() {
     const navigate = useNavigate();
-    const { user } = useContext(AuthContext);
-    const { setProducts } = useProducts();
+    const {setProducts } = useContext(ProductsContext);
+    const { userState } = useContext(AuthContext);
 
     async function onSubmit(values) {
-        const result = await request('/data/products', values, 'post', user.accessToken);
+        const result = await request.post('/data/products', values, userState.accessToken);
         setProducts(state => [...state, result]);
         navigate('/');
     }

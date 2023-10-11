@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
+import { Button, Form } from "react-bootstrap";
+import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext.js";
 import useForm from "../hooks/useForm.js"
-import { useContext } from "react";
-import { Button, Form } from "react-bootstrap";
 
 
 export default function Register() {
