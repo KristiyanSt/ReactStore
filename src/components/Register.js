@@ -22,6 +22,18 @@ export default function Register() {
                         <Form.Label>Password</Form.Label>
                         <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
                     </Form.Group>
+                    <Form.Group className="mb-3" controlId="password">
+                        <Form.Label>Confirm password</Form.Label>
+                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="password">
+                        <Form.Label>Gender</Form.Label>
+                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="password">
+                        <Form.Label>Age</Form.Label>
+                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
+                    </Form.Group>
                     <Button type="submit" variant="primary" >Submit</Button>
                     <p style={{ marginTop: "15px" }}>Already have an account? <Link to="/login">Sign in here!</Link> </p>
                 </Form>

@@ -10,9 +10,13 @@ export default function useForm(initialValues ,onSubmit){
         e.preventDefault();
         onSubmit(values);
     }
+    function changeValues(values) {
+        setValues(values);
+    }
     return {
         values,
         onChange,
-        formHandler
+        formHandler,
+        setValues
     }
 }

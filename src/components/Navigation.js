@@ -5,7 +5,7 @@ import { LinkContainer } from "react-router-bootstrap";
 
 export default function Navigation() {
 
-    const { userState, onLogout } = useContext(AuthContext);
+    const { user, onLogout } = useContext(AuthContext);
 
     return (
         <Navbar sticky="top" bg="light" data-bs-theme="light">
@@ -14,7 +14,7 @@ export default function Navigation() {
                     <Navbar.Brand >Store</Navbar.Brand>
                 </LinkContainer>
                 <Nav >
-                    {!userState.accessToken &&
+                    {!user.accessToken &&
                         (<>
                             <LinkContainer to="/register">
                                 <Nav.Link>Register</Nav.Link>
@@ -23,16 +23,16 @@ export default function Navigation() {
                                 <Nav.Link>Login</Nav.Link>
                             </LinkContainer>
                         </>)}
-                    {userState.accessToken &&
+                    {user.accessToken &&
                         (<>
                             <LinkContainer to="/profile">
                                 <Nav.Link>My Profile</Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to="/">
-                                <Nav.Link>Welcome {userState.email}</Nav.Link>
+                            <LinkContainer to="/cart">
+                                <Nav.Link>Cart</Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/create">
-                                <Nav.Link>Create product</Nav.Link>
+                                <Nav.Link>Create ad</Nav.Link>
                             </LinkContainer>
                             {/* <LinkContainer to="/"> */}
                                 <Nav.Link onClick={onLogout}>Logout</Nav.Link>

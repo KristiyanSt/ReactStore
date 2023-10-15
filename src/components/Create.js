@@ -9,26 +9,20 @@ import { ProductsContext } from "../contexts/ProductsCtx.js";
 const request = requestFactory();
 
 export default function Create() {
-    const navigate = useNavigate();
-    const {setProducts } = useContext(ProductsContext);
-    const { userState } = useContext(AuthContext);
 
-    async function onSubmit(values) {
-        const result = await request.post('/data/products', values, userState.accessToken);
-        setProducts(state => [...state, result]);
-        navigate('/');
-    }
+    const { onCreate } = useContext(ProductsContext);
+
     const { values, onChange, formHandler } = useForm(
         { name: "", price: "", type: "", imageUrl: "" },
-        onSubmit
+        onCreate
     );
     return (
         <div>
-            <h2 className="d-flex justify-content-center" style={{ marginTop: "30px" }} >Create product</h2>
+            <h2 className="d-flex justify-content-center" style={{ marginTop: "30px" }} >Create ad</h2>
             <div className="d-flex justify-content-center" style={{ marginTop: "30px" }} >
                 <Form onSubmit={formHandler}>
                     <Form.Group className="mb-3" controlId="name">
-                        <Form.Label>Product name</Form.Label>
+                        <Form.Label>What are you selling?</Form.Label>
                         <Form.Control type="text" name="name" onChange={onChange}
                             placeholder="Enter product's name" />
                     </Form.Group>

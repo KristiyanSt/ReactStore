@@ -1,38 +1,35 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { requestFactory } from '../request.js';
 import useLocalStorage from '../hooks/useLocalStorage.js';
+import authService from '../services/authService.js';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
-    const request = requestFactory();
-
-    const { userState,
-        removeLocalStorageAuth,
-        setLocalStorageAuth } = useLocalStorage();
+    
+    const localStorageRef = useLocalStorage();
 
     async function onLogin(values) {
-        const result = await request.post('/users/login', values, null, 'post');
-        console.log(result);
-        setLocalStorageAuth(result);
+        const result = await authService.login(values);
+        localStorageRef.setUser(result);
         navigate('/');
     }
 
     async function onRegister(values) {
-        const result = await request.post('/users/register', values, null, 'post');
-        setLocalStorageAuth(result);
+        const result = await authService.register(values);
+        localStorageRef.setUser(result);
         navigate('/');
     }
+
     async function onLogout() {
-        await request.get('/users/logout', null, userState.accessToken);
-        removeLocalStorageAuth();
+        await authService.logout(localStorageRef.user.accessToken);
+        localStorageRef.removeUser();
     }
     const authContext = {
-        userState,
+        user : localStorageRef.user,
         onLogin,
         onRegister,
         onLogout
