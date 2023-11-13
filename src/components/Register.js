@@ -4,37 +4,45 @@ import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext.js";
 import useForm from "../hooks/useForm.js"
 
+import FormGroup from "./common/FormGroup.js";
+import { registerGroups } from "./common/formGroups.js";
+import { AlertContext } from "../contexts/AlertContext.js";
+import { registerValidator } from "./common/validators.js";
 
 export default function Register() {
     const { onRegister } = useContext(AuthContext);
-    const {  values, onChange, formHandler } = useForm({ email: "", password: "" }, onRegister);
+    const { isLoading } = useContext(AlertContext);
 
+    const initialValues = { email: "", username: "", city: "", password: "", confirmPassword: "" };
+
+    const { values, 
+        validationErrors, 
+        onChange, 
+        onBlur, 
+        formHandler } = useForm(initialValues, onRegister, registerValidator);
+
+    const disabled = Object.values(validationErrors).some(x => x) ||
+        Object.values(validationErrors).some(x => x === "") || 
+        isLoading;
+        
     return (
         <div>
             <h2 className="d-flex justify-content-center" style={{ marginTop: "30px" }}>Register</h2>
             <div className="d-flex justify-content-center" style={{ marginTop: "30px" }}>
                 <Form onSubmit={formHandler}>
-                    <Form.Group className="mb-3" controlId="email">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control onChange={onChange} type="email" name="email" placeholder="Enter email"></Form.Control>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="password">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="password">
-                        <Form.Label>Confirm password</Form.Label>
-                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="password">
-                        <Form.Label>Gender</Form.Label>
-                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="password">
-                        <Form.Label>Age</Form.Label>
-                        <Form.Control onChange={onChange} type="password" name="password" placeholder="Enter password"></Form.Control>
-                    </Form.Group>
-                    <Button type="submit" variant="primary" >Submit</Button>
+
+                    {registerGroups.map((x,i) => <FormGroup key={i} 
+                        el={x}
+                        isInvalid={validationErrors[x.name] == true}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        value={values[x.name]} />)}
+
+                    <Button type="submit"
+                        variant="primary"
+                        disabled={disabled}>
+                        {isLoading ? 'Loading...' : 'Register'}
+                    </Button>
                     <p style={{ marginTop: "15px" }}>Already have an account? <Link to="/login">Sign in here!</Link> </p>
                 </Form>
             </div >

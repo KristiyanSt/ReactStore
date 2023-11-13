@@ -1,42 +1,43 @@
-import { requestFactory } from "../request.js";
+import { requester } from "../request.js";
 
 
-const request = requestFactory();
+const request = requester();
 
 const endpoints = {
-    getAll: '/data/products',
+    all: '/data/products',
     getOne: '/data/products/',
     edit: '/data/products/',
     create: '/data/products',
     delete: '/data/products/'
 }
 
-async function getAll() {
-    return request.get(endpoints.getAll);
-}
+async function getAll(query) {
+    if(query) {
+        
+        let queryString = '?where=' 
+        const queryArr = Object.entries(query).map(([field, value]) => encodeURIComponent(`${field}="${value}"`));
+        queryString += queryArr.join(encodeURIComponent(' AND '))
+        return request.get(endpoints.all + queryString);
+    }
+    return request.get(endpoints.all);
 
-async function getProduct(id) {
+}
+async function getProductById(id) {
     return request.get(endpoints.getOne + id);
 }
-
-async function editProduct(id, values, accessToken) {
-    return request.put(endpoints.edit + id, values, accessToken);
+async function editProduct(productId, values, accessToken) {
+    return request.put(endpoints.edit + productId, values, accessToken);
 }
-
-async function createProduct(values, accessToken) {
-    return request.post(endpoints.create, values, accessToken);
+async function createProduct(values, user) {
+    return request.post(endpoints.create, values, user.accessToken);
 }
-
 async function deleteProduct(id, accessToken) {
     return request.delete(endpoints.delete + id, null, accessToken);
 }
 
-async function addWillingUser (id, userId) {
-    return request.put()
-}
 export default {
     getAll,
-    getProduct,
+    getProductById,
     editProduct,
     createProduct,
     deleteProduct

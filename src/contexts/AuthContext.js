@@ -1,35 +1,68 @@
-import { createContext, useEffect} from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useLocalStorage from '../hooks/useLocalStorage.js';
 import authService from '../services/authService.js';
+import { AlertContext } from './AlertContext.js';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
-    
-    const localStorageRef = useLocalStorage();
+    const { showMessage } = useContext(AlertContext);
+    const { isLoading, setLoading } = useContext(AlertContext);
+
+    const [user, setUser] = useLocalStorage('auth');
 
     async function onLogin(values) {
-        const result = await authService.login(values);
-        localStorageRef.setUser(result);
-        navigate('/');
-    }
+        setLoading(true);
+        try {
+            const result = await authService.login(values);
 
+            if (result.code === 403) {
+                throw new Error('Invalid email or password !');
+            }
+
+            showMessage('Successful login!');
+            setUser(result);
+            navigate('/');
+        } catch (err) {
+            showMessage(err.message, 'danger');
+        } finally {
+            setLoading(false);
+        }
+
+    }
     async function onRegister(values) {
-        const result = await authService.register(values);
-        localStorageRef.setUser(result);
-        navigate('/');
+        setLoading(true);
+        try {
+            const result = await authService.register(values);
+            showMessage('Successful registration!');
+            setUser(result);
+            navigate('/');
+        } catch (err) {
+            showMessage(err.message, 'danger')
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function onLogout() {
-        await authService.logout(localStorageRef.user.accessToken);
-        localStorageRef.removeUser();
+        setLoading(true);
+        try {
+            await authService.logout(user.accessToken);
+            showMessage('Successful logout!');
+        } catch (err) {
+            showMessage(err.message, 'danger')
+        } finally {
+            setLoading(false);
+        }
+
+        setUser(undefined);
     }
     const authContext = {
-        user : localStorageRef.user,
+        user,
         onLogin,
         onRegister,
         onLogout

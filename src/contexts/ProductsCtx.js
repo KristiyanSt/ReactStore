@@ -1,57 +1,91 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../contexts/AuthContext.js';
 import productService from "../services/productService.js";
+import productsReducer from "../reducers/productsReducer.js";
+import { AlertContext } from "./AlertContext.js";
+
 
 export const ProductsContext = createContext();
 
 export default function ProductsProvider({ children }) {
     const navigate = useNavigate();
+    const { setLoading, showMessage } = useContext(AlertContext);
 
     const { user } = useContext(AuthContext);
+    const { products, dispatch } = useProducts();
 
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        productService.getAll()
-            .then(result => setProducts(result));
-
-    }, []);
-
-    async function onEdit(values) {
-        //TODO check if id could be used inside ProductsCtx but not passed as params
-        const product = await productService.editProduct(values._id, values, user.accessToken);
-        setProducts(state => state.map(x => x._id == values._id ? product : x));
-        navigate('/products/details/' + values._id);
+    async function onEdit(productId, values) {
+        //TODO handle 404 not found
+        setLoading(true);
+        try {
+            const product = await productService.editProduct(productId, values, user.accessToken);
+            dispatch({ type: 'EDIT_PRODUCT', payload: product });
+            navigate('/products/details/' + productId);
+        } catch (err) {
+            showMessage(err.message, 'danger');
+        } finally {
+            setLoading(false);
+        }
     }
     async function onDelete(id) {
-        await productService.deleteProduct(id, user.accessToken);
-        setProducts(state => state.filter(x => x._id !== id));
-        navigate('/');
+        //TODO handle 404 not found
+        setLoading(true);
+        try {
+            await productService.deleteProduct(id, user.accessToken);
+            dispatch({ type: 'DELETE_PRODUCT', payload: id });
+            navigate('/');
+
+        } catch (err) {
+            showMessage(err.message, 'danger');
+        } finally {
+            setLoading(false);
+        }
     }
     async function onCreate(values) {
-        const product = await productService.createProduct(values, user.accessToken);
-        setProducts(state => [...state, product]);
-        navigate('/');
-    }
-    async function setProductDetails(id, setProduct) {
-        //TODO maybe it is better to do the request in create component since this function does getting and setting features
-        const product = await productService.getProduct(id);
-        setProduct(product);
-    }
-    async function onCartAdd(userId) {
-        
+        setLoading(true);
+        try {
+            const result = await productService.createProduct(values, user);
+            console.log(result)
+            dispatch({ type: 'CREATE_PRODUCT', payload: result });
+            navigate('/');
+        } catch (err) {
+            showMessage(err.message, 'danger');
+            navigate('/login');
+        } finally {
+            setLoading(false);
+        }
     }
 
     const context = {
         products,
         onEdit,
         onCreate,
-        onDelete,
-        setProductDetails
+        onDelete
     }
 
     return <ProductsContext.Provider value={context}>
         {children}
     </ProductsContext.Provider>
 }
+
+function useProducts() {
+
+    const [products, dispatch] = useReducer(productsReducer, []);
+
+    useEffect(() => {
+        try {
+            productService.getAll()
+                .then(products => dispatch({ type: 'PRODUCTS_FETCH', payload: products }))
+                .catch(err => {
+                    console.log(err.message);
+                })
+        } catch (err) {
+            console.log(err.message);
+        }
+    }, []);
+
+    return { products, dispatch };
+}
+
+

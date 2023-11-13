@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from "react"
-import { requestFactory } from "../request.js"
+import { requester } from "../request.js"
 import { AuthContext } from "../contexts/AuthContext.js";
 
-const request = requestFactory();
+const request = requester();
 
 export default function Profile() {
-    const {user } = useContext(AuthContext);
-    const [currentUser,setCurrentUser] = useState({});
-    useEffect(() => { 
-        request.get('/users/me', null, user.accessToken)
-            .then(result => setCurrentUser(result))
-    },[])
+    const { user } = useContext(AuthContext);
 
-    console.log(currentUser);
+    console.log(user);
 
-    return <h3 className="d-flex justify-content-center" style={{ marginTop: "30px" }} >Profile information</h3>
+    return (<div>
+        <h3 className="d-flex justify-content-center" style={{ marginTop: "30px" }} >Profile information</h3>
+        <p>{user.email}</p>
+    </div>
+    )
 }

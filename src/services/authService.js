@@ -1,6 +1,6 @@
-import { requestFactory } from "../request.js";
+import { requester } from "../request.js";
 
-const request = requestFactory();
+const request = requester();
 
 const endpoints = {
     login: '/users/login',
