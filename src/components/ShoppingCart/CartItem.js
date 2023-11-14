@@ -1,25 +1,39 @@
-import { Button, Card, Stack } from "react-bootstrap";
+import { Button, Stack } from "react-bootstrap";
+import styles from './CartItem.module.css'
+import { useContext } from "react";
+import { ProductsContext } from "../../contexts/ProductsCtx.js";
 
-export default function CartItem({ product,quantity, removeFromCart }) {
+export default function CartItem({ productId, quantity, removeFromCart }) {
+    const { products } = useContext(ProductsContext);
+
+    const product = products.find(x => x._id == productId);
 
     return <>
-        <Stack direaction="horizontal" gap={2}>
-            <img 
+        <Stack direction="horizontal" gap={2} className="d-flex align-items-center">
+            <img
                 src={product.imageUrl}
-                style={{width: '125px', height: '95px'}} />
+                className={styles.img}
+            />
+            <div className="me-auto">
+                {product.name}{" "}
+                {quantity > 1 &&
+                    <span className="text-muted">
+                        x{quantity}
+                    </span>
+                }
+                <div className="text-muted">
+                    ${product.price}
+                </div>
+            </div>
+            <div>
+                ${Number(product.price) * quantity}
+            </div>
+            <Button
+                variant="outline-danger"
+                onClick={() => removeFromCart(product._id)}
+            >&times;
+            </Button>
 
         </Stack>
-
-        {/* // <Card style={{ width: '8rem', margin: "20px", display: "inline-block" }}>
-        //     <Card.Img variant="top" src={product.imageUrl} />
-        //     <Card.Body>
-        //         <Card.Title>{product.name}</Card.Title>
-        //         <Card.Text>
-        //             Price: ${Number(product.price) * Number(product.quantity)} x {quantity}
-        //         </Card.Text>
-        //         <Button onClick={() => removeFromCart(product._id)} 
-        //         variant="danger">Remove</Button>
-        //     </Card.Body>
-        // </Card> */}
     </>
 }

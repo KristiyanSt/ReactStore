@@ -6,6 +6,7 @@ import { Col, Row } from "react-bootstrap";
 
 export default function Home() {
     const { products } = useContext(ProductsContext);
+
     const [params, setSearchParams] = useSearchParams({ query: "", });
 
     const setParams = (e) => {
@@ -13,15 +14,15 @@ export default function Home() {
     }
 
     return (
-        <div>
-            <div style={{ marginLeft: '700px' }}>
-                <input type="text" name="query" onChange={setParams} value={params.get('query')} /><button>search</button>
-            </div>
-            {products.length == 0 && <h3 className="d-flex justify-content-center"> There are no products!</h3>}
+            // {/* <div style={{ marginLeft: '700px' }}>
+            //     <input type="text" name="query" onChange={setParams} value={params.get('query')} /><button>search</button>
+            // </div> */}
+        <div className="d-flex justify-content-center">
+            {products.length == 0 && <span style={{fontSize: '25px'}} className="d-flex justify-content-center fw-bold mt-4">Currently there are no products to display!</span>}
             {products &&
-                <Row md={2} xs={1} lg={3} className="g-3">
+                <Row xs={2} md={3} lg={4} className="g-2">
                     {products.map(p => <Col key={p._id}><ProductCard product={p} /></Col>)}
                 </Row>}
-        </div >
+        </div>
     )
 }

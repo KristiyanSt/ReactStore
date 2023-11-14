@@ -1,27 +1,22 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js";
-import { Button, Card, Offcanvas } from "react-bootstrap";
+import { Offcanvas, Stack } from "react-bootstrap";
 import { ProductsContext } from "../../contexts/ProductsCtx.js";
 import CartItem from "./CartItem.js";
 
 
 export default function ShoppingCart() {
     const { products } = useContext(ProductsContext);
-
     const {
         cart,
-        closeCart,
         isOpen,
-        decreaseProductQuantity,
+        closeCart,
         removeFromCart
     } = useContext(ShoppingCartContext);
 
-    const cartItems = products.filter(item => {
-        return cart.some(x => x.productId == item._id)
-    });
-
-    const total = cartItems.reduce((acc, item) => {
-        return acc += Number(item.price) * Number(item.quantity)
+    const total = cart.reduce((acc, x) => {
+        const product = products.find(p => p._id == x.productId);
+        return acc += Number(product?.price) * x.quantity
     }, 0);
 
 
@@ -30,13 +25,20 @@ export default function ShoppingCart() {
             <Offcanvas.Title>Shopping Cart</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-            {cartItems.length == 0 && <p>Your cart is empty!</p>}
-            {cartItems && cartItems.map(p => <CartItem
-                key={p._id}
-                product={p}
-                quantity={cart.find(x => x.productId == p._id).quantity}
-                removeFromCart={removeFromCart} />)}
-            Total: {total}
+            {cart.length > 0
+                ? <>
+                    <Stack gap={3} className="d-flex align-items-center">
+                        {cart.map(p => <CartItem
+                            key={p.productId}
+                            {...p}
+                            removeFromCart={removeFromCart}
+                        />)}
+                        <div className="ms-auto fw-bold fs-4 total">
+                            Total: ${total}
+                        </div>
+                    </Stack>
+                </>
+                : <span className="fw-bold">Your cart is empty!</span>}
         </Offcanvas.Body>
     </Offcanvas>
 }

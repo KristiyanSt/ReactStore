@@ -9,14 +9,14 @@ import { UserNav } from "./UserNav.js"
 export default function Navigation() {
 
     const { user } = useContext(AuthContext);
-    const { showCart } = useContext(ShoppingCartContext);
+    const { showCart, cartQuantity } = useContext(ShoppingCartContext);
 
-    return <Navbar bg="light" data-bs-theme="light" className="shadow-sm sticky-top mb-3">
+    return <Navbar bg="white" data-bs-theme="light" className="shadow-sm sticky-top mb-3">
         <Container>
             <Navbar.Brand >OnProcess</Navbar.Brand>
             <Nav>
                 {!user && <GuestNav />}
-                {user && <UserNav showCart={showCart} />}
+                {user && <UserNav showCart={showCart} cartQuantity={cartQuantity}/>}
             </Nav>
         </Container>
     </Navbar>

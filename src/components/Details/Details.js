@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Card, Row } from "react-bootstrap";
+import { Button, Card, Row, Col } from "react-bootstrap";
 import { ProductsContext } from "../../contexts/ProductsCtx.js";
 import { AuthContext } from "../../contexts/AuthContext.js";
 import productService from "../../services/productService.js";
@@ -13,7 +13,7 @@ export default function Details() {
 
     const { user } = useContext(AuthContext);
     const { onDelete } = useContext(ProductsContext);
-    const { increaseProductQuantity, getQuantityInCart } = useContext(ShoppingCartContext);
+    const { increaseProductQuantity, decreaseProductQuantity, getQuantityInCart } = useContext(ShoppingCartContext);
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [product, setProduct] = useState({});
@@ -26,22 +26,25 @@ export default function Details() {
 
     const quantityInCart = getQuantityInCart(product._id);
     const productQuantity = product.quantity;
-    
+
     const options = [];
     for (let i = 0; i < productQuantity - quantityInCart; i++) {
         options.push(<option key={i} value={i + 1}>{i + 1}</option>)
     }
 
     return (
-        <div>
-            <h1 style={{ textAlign: "center" }}>Details</h1>
+        <div className="d-flex justify-content-center">
             {product &&
-                <Card
-                    style={{ width: '25rem', margin: "20px", display: "inline-block", position: 'center' }}>
-                    {/* <Card.Header>{product.name}</Card.Header> */}
-                    <Card.Body>
-                        <Card.Title>{product.name}</Card.Title>
-                        <Card.Img variant="top" src={product.imageUrl} className="mb-2" />
+                <Card className="w-25 mt-4 h-100" style={{width: '700px'}}>
+                    <Card.Img
+                        className="mb-2"
+                        variant="top"
+                        src={product.imageUrl} />
+                    <Card.Body className="d-flex flex-column">
+                        <Card.Title className="d-flex justify-content-between align-items-baseline mb-4">
+                            <span className="fs-2">{product.name} </span>
+                            <span className="ms-2 text-muted">${product.price}</span>
+                        </Card.Title>
                         {user &&
                             (user._id == product._ownerId ?
                                 <Row>
@@ -50,24 +53,38 @@ export default function Details() {
                                 </Row>
                                 :
                                 <Row>
-                                    <Button onClick={() => increaseProductQuantity(product._id, selectedQuantity)}
-                                        className="btn btn-success btn-block mb-2"
-                                        disabled={productQuantity == quantityInCart}
-                                    >{productQuantity == quantityInCart ? "No more products available" : "Add to cart"}
-                                    </Button>
-                                    <select
-                                        className="mb-2"
-                                        id="quantity"
-                                        defaultValue="select-quantity"
-                                        onChange={(e) => setSelectedQuantity(e.target.value)}>
-                                        <option value="select-quantity" hidden>Select quantity</option>
-                                        {options}
-                                    </select>
-                                    {quantityInCart > 0 &&
-                                        <span className="fs-6 ms-2 text-success">{quantityInCart} added in cart</span>}
+                                    {quantityInCart == 0
+                                        ? <div className="mt-auto">
+                                            <Button
+                                                variant="success"
+                                                className="w-100"
+                                                onClick={() => increaseProductQuantity(product._id)}
+                                            >+ Add to cart
+                                            </Button>
+                                        </div>
+                                        : <div className="d-flex align-items-center
+                                             flex-column" style={{ gap: '.5rem' }}>
+                                            <div className="d-flex align-items-center 
+                                                justify-content-center" style={{ gap: '.5rem' }}>
+                                                <Button 
+                                                variant="success" 
+                                                disabled={product.quantity == quantityInCart}
+                                                onClick={() => increaseProductQuantity(product._id)}
+                                                >+
+                                                </Button>
+                                                <Button 
+                                                variant="danger"
+                                                onClick={() => decreaseProductQuantity(product._id)}
+                                                 >-
+                                                 </Button>
+                                            </div>
+                                            {product.quantity == quantityInCart && <span className="text-danger">No more products available</span>}
+                                            <span className="fs-6 ms-2 text-success">{quantityInCart} added in cart</span>
+                                        </div>}
                                 </Row>)
                         }
                     </Card.Body>
+                    <div>Reviews</div>
                 </Card>}
             <DeleteConfirm
                 isOpen={isConfirmOpen}

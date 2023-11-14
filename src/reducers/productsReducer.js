@@ -7,7 +7,7 @@ export default function productsReducer(state, action) {
         case 'CREATE_PRODUCT':
             return [...state, action.payload];
         case 'DELETE_PRODUCT':
-            return state.filter(x => x._id != action.payload.id)
+            return state.filter(x => x._id != action.payload)
         default:
             return state;
     }
