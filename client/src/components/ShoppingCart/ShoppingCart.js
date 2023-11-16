@@ -1,8 +1,8 @@
 import { useContext } from "react"
-import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js";
-import { Offcanvas, Stack } from "react-bootstrap";
-import { ProductsContext } from "../../contexts/ProductsCtx.js";
-import CartItem from "./CartItem.js";
+import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
+import { ProductsContext } from "../../contexts/ProductsCtx.js"
+import { Offcanvas, Stack } from "react-bootstrap"
+import CartItem from "./CartItem.js"
 
 
 export default function ShoppingCart() {
@@ -16,7 +16,7 @@ export default function ShoppingCart() {
 
     const total = cart.reduce((acc, x) => {
         const product = products.find(p => p._id == x.productId);
-        return acc += Number(product?.price) * x.quantity
+        return acc += Number(product?.price || 0) * x.quantity
     }, 0);
 
 

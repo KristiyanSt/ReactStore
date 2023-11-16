@@ -1,15 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 
-import Home from "../components/Home.js";
-import Edit from "../components/Edit.js";
-import Login from "../components/Login.js";
-import Details from "../components/Details/Details.js";
-import Register from "../components/Register.js";
-import Create from "../components/Create.js";
-import PrivateRoute from "../components/PrivateRoute.js";
-import Logout from "../components/Logout.js";
-import Profile from "../components/Profile.js";
-import Products from "../components/Products.js";
+import Home from "../components/Home.js"
+import Edit from "../components/Edit/Edit.js"
+import Login from "../components/Login/Login.js"
+import Details from "../components/Details/Details.js"
+import Register from "../components/Register/Register.js"
+import Create from "../components/Create/Create.js"
+import PrivateRoute from "../components/PrivateRoute.js"
+import Logout from "../components/Logout/Logout.js"
+import Profile from "../components/Profile.js"
+import Products from "../components/Products/Products.js"
 
 
 export default function RoutesWrapper() {

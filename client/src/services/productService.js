@@ -20,7 +20,6 @@ async function getAll(query) {
         return request.get(endpoints.all + queryString);
     }
     return request.get(endpoints.all);
-
 }
 async function getProductById(id) {
     return request.get(endpoints.getOne + id);

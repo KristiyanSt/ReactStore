@@ -1,19 +1,18 @@
-import { Link } from "react-router-dom";
-import { Button, Form } from "react-bootstrap";
-import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext.js";
-import useForm from "../hooks/useForm.js"
-
-import FormGroup from "./common/FormGroup.js";
-import { registerGroups } from "./common/formGroups.js";
-import { AlertContext } from "../contexts/AlertContext.js";
-import { registerValidator } from "./common/validators.js";
+import { useContext } from "react"
+import { Link } from "react-router-dom"
+import { AuthContext } from "../../contexts/AuthContext.js"
+import { AlertContext } from "../../contexts/AlertContext.js"
+import { Button, Form } from "react-bootstrap"
+import useForm from "../../hooks/useForm.js"
+import FormGroup from "../common/FormGroup.js"
+import { registerGroups } from "../common/formGroups.js"
+import { registerValidator } from "../common/validators.js"
 
 export default function Register() {
     const { onRegister } = useContext(AuthContext);
     const { isLoading } = useContext(AlertContext);
 
-    const initialValues = { email: "", username: "", city: "", password: "", confirmPassword: "" };
+    const initialValues = { email: "", username: "", password: "", confirmPassword: "" };
 
     const { values, 
         validationErrors, 
@@ -25,10 +24,9 @@ export default function Register() {
         Object.values(validationErrors).some(x => x === "") || 
         isLoading;
         
-    return (
-        <div>
-            <h2 className="d-flex justify-content-center" style={{ marginTop: "30px" }}>Register</h2>
-            <div className="d-flex justify-content-center" style={{ marginTop: "30px" }}>
+    return <div>
+            <h2 className="d-flex justify-content-center mt-4">Register</h2>
+            <div className="d-flex justify-content-center  mt-4">
                 <Form onSubmit={formHandler}>
 
                     {registerGroups.map((x,i) => <FormGroup key={i} 
@@ -38,14 +36,14 @@ export default function Register() {
                         onBlur={onBlur}
                         value={values[x.name]} />)}
 
-                    <Button type="submit"
+                    <Button 
+                        type="submit"
                         variant="primary"
                         disabled={disabled}>
                         {isLoading ? 'Loading...' : 'Register'}
                     </Button>
-                    <p style={{ marginTop: "15px" }}>Already have an account? <Link to="/login">Sign in here!</Link> </p>
+                    <p className="mt-3">Already have an account? <Link to="/login">Sign in here!</Link> </p>
                 </Form>
             </div >
         </div>
-    )
 }

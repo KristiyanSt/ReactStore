@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Card, Row } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { ProductsContext } from "../../contexts/ProductsCtx.js";
 import { AuthContext } from "../../contexts/AuthContext.js";
 import productService from "../../services/productService.js";
@@ -14,41 +14,44 @@ export default function Details() {
 
     const { user } = useContext(AuthContext);
     const { onDelete } = useContext(ProductsContext);
-    const { increaseProductQuantity, decreaseProductQuantity, getQuantityInCart } = useContext(ShoppingCartContext);
+    const { increaseProductQuantity,
+        decreaseProductQuantity,
+        getQuantityInCart } = useContext(ShoppingCartContext);
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [product, setProduct] = useState(null);
     const [rating, setRating] = useState(null);
+    const [ratingsCount, setRatingsCount] = useState(0);
 
     useEffect(() => {
         // handle unauthorized
-        if (product == null) {
-            productService.getProductById(id)
-                .then(setProduct);
-            ratingService.getUserRating(id, user._id)
-                .then(data => {
-                    if (data.length !== 0) {
-                        setRating(data.rating);
-                    }
-                });
-        }
-
-        if (rating == null) {
-            ratingService.rateProduct(product._id, rating, user.accessToken)
-                .then(setRating)
-        }
-
-    }, [rating]);
-
-    // useEffect(() => {
-    // }, [rating]);
-
-
+        Promise.all([
+            productService.getProductById(id),
+            ratingService.getUserRating(id, user?._id),
+            ratingService.getRatingsCountById(id)
+        ]).then(([
+            product,
+            ratingData,
+            ratingsCount
+        ]) => {
+            setProduct(product);
+            if (ratingData.length !== 0) {
+                setRating(ratingData[0].rating);
+            }
+            setRatingsCount(ratingsCount);
+        });
+    }, []);
 
     const onRatingClick = (rating) => {
-        setRating(rating);
+        ratingService.rateProduct(product._id, rating, user.accessToken)
+            .then(data => {
+                setRating(data.rating);
+                setRatingsCount(prevCount => prevCount + 1);
+            });
     }
+
     const quantityInCart = getQuantityInCart(product?._id);
+
     return (
         <div className="d-flex justify-content-center">
             {product &&
@@ -66,12 +69,16 @@ export default function Details() {
                         </Card.Title>
                         {user &&
                             (user._id == product._ownerId ?
-                                <Row>
-                                    <Button as={Link} to={`/products/edit/${product._id}`} style={{ display: "inline-block", marginRight: "20px", fontSize: "25px" }}>Edit</Button>
-                                    <Button as={Link} onClick={() => setIsConfirmOpen(true)} style={{ display: "inline-block", marginRight: "20px", fontSize: "25px" }}>Delete</Button>
-                                </Row>
+                                <div className="d-flex align-items-center
+                                flex-column" style={{ gap: '.5rem' }}>
+                                    <div className="d-flex align-items-center 
+                                                justify-content-center" style={{ gap: '.5rem' }}>
+                                        <Button as={Link} to={`/products/edit/${product._id}`} variant="secondary">Edit</Button>
+                                        <Button as={Link} onClick={() => setIsConfirmOpen(true)} variant="danger">Delete</Button>
+                                    </div>
+                                </div>
                                 :
-                                <Row>
+                                <div>
                                     {quantityInCart == 0
                                         ? <div className="mt-auto">
                                             <Button
@@ -97,32 +104,37 @@ export default function Details() {
                                                 >-
                                                 </Button>
                                             </div>
-                                            {product.quantity == quantityInCart && <span className="text-danger">No more products available</span>}
-                                            <span className="fs-6 ms-2 text-success">{quantityInCart} added in cart</span>
+                                            {product.quantity == quantityInCart && <span className="text-danger fw-bold">No more products available</span>}
+                                            <span className="fs-5 ms-2 text-success fw-bold">{quantityInCart} added in cart</span>
                                         </div>}
-                                </Row>)
+                                </div>)
                         }
                     </Card.Body>
-                    <div className="container-fluid mb-2" >
-                        <span className="fs-5">Rate this product :</span>
-                        <div>
-                            <Rating
-                                allowFraction
-                                size={20}
-                                onClick={onRatingClick}
-                                readonly={!!rating}
-                                initialValue={rating || 0}
-                            />
-                        </div>
-                    </div>
+                    {user &&
+                        (user._id == product._ownerId
+                            ? null
+                            : <div className="container-fluid mb-2" >
+                                <span className="fs-5">Rate this product :</span>
+                                <div>
+                                    <Rating
+                                        allowFraction
+                                        size={20}
+                                        onClick={onRatingClick}
+                                        readonly={!!rating}
+                                        initialValue={rating || 0}
+                                    />
+                                </div>
+                            </div>)
+                    }
                 </Card>}
-            <div>
+            {/* <div className="w-25 mt-4 h-100" style={{ width: '700px' }}>
+                <span className="float-end"> ({ratingsCount}) ratings.</span>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-            </div>
+            </div> */}
             <DeleteConfirm
                 isOpen={isConfirmOpen}
                 onDelete={() => onDelete(product?._id)}

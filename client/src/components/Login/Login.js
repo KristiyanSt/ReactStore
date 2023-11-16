@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+import { useContext } from "react"
+import { Link } from "react-router-dom"
+import { AuthContext } from "../../contexts/AuthContext.js"
+import { AlertContext } from "../../contexts/AlertContext.js"
 import { Form, Button } from "react-bootstrap"
-import { AuthContext } from "../contexts/AuthContext.js";
-import useForm from "../hooks/useForm.js"
-import { useContext } from "react";
-import FormGroup from "./common/FormGroup.js";
-import { loginGroups } from "./common/formGroups.js";
-import { AlertContext } from "../contexts/AlertContext.js";
-import { loginValidator } from "./common/validators.js";
+import useForm from "../../hooks/useForm.js"
+import FormGroup from "../common/FormGroup.js"
+import { loginGroups } from "../common/formGroups.js"
+import { loginValidator } from "../common/validators.js"
 
 export default function Login() {
     const { onLogin } = useContext(AuthContext);
@@ -24,10 +24,9 @@ export default function Login() {
         Object.values(validationErrors).some(x => x === "") ||
         isLoading;
 
-    return (
-        <div>
-            <h2 className="d-flex justify-content-center" style={{ marginTop: "30px" }}>Login</h2>
-            <div className="d-flex justify-content-center" style={{ marginTop: "30px" }}>
+    return <div>
+            <h2 className="d-flex justify-content-center mt-4">Login</h2>
+            <div className="d-flex justify-content-center mt-4">
                 <Form onSubmit={formHandler}>
 
                     {loginGroups.map((x, i) => <FormGroup key={i}
@@ -37,14 +36,14 @@ export default function Login() {
                         onBlur={onBlur}
                         value={values[x.name]} />)}
 
-                    <Button type="submit"
+                    <Button 
+                        type="submit"
                         variant="primary"
                         disabled={disabled}>
                         {isLoading ? 'Loading...' : 'Login'}
                     </Button>
-                    <p style={{ marginTop: "15px" }} >Don't have an account? <Link to="/register">Sign up here!</Link> </p>
+                    <p className="mt-3">Don't have an account? <Link to="/register">Sign up here!</Link> </p>
                 </Form>
             </div >
         </div >
-    )
 }
