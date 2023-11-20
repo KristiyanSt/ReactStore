@@ -1,12 +1,13 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
-import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { Offcanvas, Stack } from "react-bootstrap"
 import CartItem from "./CartItem.js"
+import productService from "../../services/productService.js"
 
 
 export default function ShoppingCart() {
-    const { products } = useContext(ProductsContext);
+    const [cartProducts, setCartProducts] = useState([]);
+
     const {
         cart,
         isOpen,
@@ -14,11 +15,18 @@ export default function ShoppingCart() {
         removeFromCart
     } = useContext(ShoppingCartContext);
 
+    useEffect(() => {
+        if(cart.length !== 0) {
+            productService.getProductsByIds(cart.map(x => `"${x.productId}"`))
+            .then(setCartProducts);
+        }
+    },[cart]);
+
+
     const total = cart.reduce((acc, x) => {
-        const product = products.find(p => p._id == x.productId);
+        const product = cartProducts.find(p => p._id == x.productId);
         return acc += Number(product?.price || 0) * x.quantity
     }, 0);
-
 
     return <Offcanvas show={isOpen} onHide={closeCart} placement={'end'} >
         <Offcanvas.Header closeButton>
@@ -30,7 +38,8 @@ export default function ShoppingCart() {
                     <Stack gap={3} className="d-flex align-items-center">
                         {cart.map(p => <CartItem
                             key={p.productId}
-                            {...p}
+                            quantity={p.quantity}
+                            product={cartProducts.find(x=> x._id == p.productId)}
                             removeFromCart={removeFromCart}
                         />)}
                         <div className="ms-auto fw-bold fs-4 total">

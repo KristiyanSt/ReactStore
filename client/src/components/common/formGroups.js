@@ -5,7 +5,7 @@ export const loginGroups = [
         type: "text",
         name: "email",
         placeholder: "john@example.com",
-        feedback: 'Email is required !'
+        feedback: 'Please enter a valid email !'
     },
     {
         controlId: "password",

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { requester } from "../request.js"
+import { requester } from "../services/request.js"
 import { AuthContext } from "../contexts/AuthContext.js";
 
 const request = requester();

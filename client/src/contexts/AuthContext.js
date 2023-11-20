@@ -61,11 +61,16 @@ export const AuthProvider = ({ children }) => {
 
         setUser(undefined);
     }
+
+    function clearLocalStorage() {
+        setUser(undefined);
+    }
     const authContext = {
         user,
         onLogin,
         onRegister,
-        onLogout
+        onLogout,
+        clearLocalStorage
     }
 
     return (<AuthContext.Provider value={authContext}>

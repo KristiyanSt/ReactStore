@@ -1,12 +1,8 @@
-import { useContext } from "react"
-import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { Button, Stack } from "react-bootstrap"
 import styles from './CartItem.module.css'
 
-export default function CartItem({ productId, quantity, removeFromCart }) {
-    const { products } = useContext(ProductsContext);
-    
-    const product = products.find(x => x._id == productId);
+export default function CartItem({ product, quantity, removeFromCart }) {
+
     if(!product) {
         return null;
     }

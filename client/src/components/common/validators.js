@@ -14,9 +14,8 @@ const registerValidator = {
 }
 const loginValidator = {
     //must be correct to pass validation
-    // check with false
 
-    email: (value) => value.trim() != "",
+    email: (value) => EMAIL_REGEX.test(value),
     password: (value) => value.trim() != ""
 }
 const productValidator = {

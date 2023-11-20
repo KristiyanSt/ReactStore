@@ -1,19 +1,19 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../contexts/AuthContext.js';
 import productService from "../services/productService.js";
 import productsReducer from "../reducers/productsReducer.js";
-import { AlertContext } from "./AlertContext.js";
+import { AlertContext } from "./AlertContext.js"
 
-
+const pageSize = 4;
 export const ProductsContext = createContext();
 
 export default function ProductsProvider({ children }) {
     const navigate = useNavigate();
     const { setLoading, showMessage } = useContext(AlertContext);
 
-    const { user } = useContext(AuthContext);
-    const { products, dispatch } = useProducts();
+    const { user, clearLocalStorage } = useContext(AuthContext);
+    const { products, dispatch, setPage, page, productsCount, setProductsCount } = useProducts();
 
     async function onEdit(productId, values) {
         //TODO handle 404 not found
@@ -45,12 +45,17 @@ export default function ProductsProvider({ children }) {
     async function onCreate(values) {
         setLoading(true);
         try {
-            const result = await productService.createProduct(values, user);
-            console.log(result)
-            dispatch({ type: 'CREATE_PRODUCT', payload: result });
-            navigate('/');
+            const response = await productService.createProduct(values, user);
+            if(products.length < 4) {
+                dispatch({ type: 'CREATE_PRODUCT', payload: response });
+            }
+            setProductsCount(count => count + 1);
+            navigate(`/products/details/${response._id}`);
         } catch (err) {
-            showMessage(err.message, 'danger');
+            if (err.status == 403) {
+                clearLocalStorage();
+                showMessage('Invalid credentials, please log in !', 'danger');
+            }
             navigate('/login');
         } finally {
             setLoading(false);
@@ -61,7 +66,10 @@ export default function ProductsProvider({ children }) {
         products,
         onEdit,
         onCreate,
-        onDelete
+        onDelete,
+        setPage,
+        page,
+        productsCount
     }
 
     return <ProductsContext.Provider value={context}>
@@ -72,20 +80,30 @@ export default function ProductsProvider({ children }) {
 function useProducts() {
 
     const [products, dispatch] = useReducer(productsReducer, []);
+    // const [products,setProducts]= useState([]);
+    const [page, setPage] = useState(0);
+    const [productsCount, setProductsCount] = useState(0);
 
     useEffect(() => {
-        try {
-            productService.getAll()
-                .then(products => dispatch({ type: 'PRODUCTS_FETCH', payload: products }))
-                .catch(err => {
-                    console.log(err.message);
-                })
-        } catch (err) {
-            console.log(err.message);
-        }
-    }, []);
 
-    return { products, dispatch };
+        productService.getAll(page,pageSize)
+            .then(products => {
+                // setProducts(products);
+                dispatch({ type: 'PRODUCTS_FETCH', payload: products })
+            })
+            .catch(err => {
+                console.log(err.message);
+            });
+
+        productService.getProductsCount()
+            .then(count => setProductsCount(count))
+            .catch(err => {
+                console.log(err.message);
+            });
+
+    }, [page]);
+
+    return { products, dispatch, setPage, page, productsCount };
 }
 
 

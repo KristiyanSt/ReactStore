@@ -1,4 +1,4 @@
-import { requester } from "../request.js";
+import { requester } from "./request.js";
 
 const request = requester();
 
