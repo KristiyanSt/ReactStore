@@ -1,10 +1,11 @@
 import { requester } from "./request.js";
 
 const URL = '/data/products';
+const PRODUCTS_PAGE_SIZE = 4;
 
 const request = requester();
 
-async function getAll(currentPage, pageSize) {
+async function getAll(offset) {
     // if(query) {
     //     let queryString = '?where=' 
     //     const queryArr = Object.entries(query).map(([field, value]) => encodeURIComponent(`${field}="${value}"`));
@@ -12,8 +13,7 @@ async function getAll(currentPage, pageSize) {
     //     return request.get(endpoints.all + queryString);
     // }
 
-    const offset = currentPage * pageSize;
-    const query = `?offset=${offset}&pageSize=${pageSize}`
+    const query = `?offset=${offset}&pageSize=${PRODUCTS_PAGE_SIZE}`
     return request.get(URL + query);
 }
 async function getProductsByIds(productsIds) {

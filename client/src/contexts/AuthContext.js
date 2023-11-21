@@ -25,7 +25,12 @@ export const AuthProvider = ({ children }) => {
             }
 
             showMessage('Successful login!');
-            setUser(result);
+            setUser({
+                _id: result._id,
+                accessToken: result.accessToken,
+                email: result.email,
+                username: result.username
+            });
             navigate('/');
         } catch (err) {
             showMessage(err.message, 'danger');
@@ -39,7 +44,12 @@ export const AuthProvider = ({ children }) => {
         try {
             const result = await authService.register(values);
             showMessage('Successful registration!');
-            setUser(result);
+            setUser({
+                _id: result._id,
+                accessToken: result.accessToken,
+                email: result.email,
+                username: result.username
+            });
             navigate('/');
         } catch (err) {
             showMessage(err.message, 'danger')
@@ -59,10 +69,10 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
 
-        setUser(undefined);
+        clearAuthFromLocalStorage();
     }
 
-    function clearLocalStorage() {
+    function clearAuthFromLocalStorage() {
         setUser(undefined);
     }
     const authContext = {
@@ -70,7 +80,7 @@ export const AuthProvider = ({ children }) => {
         onLogin,
         onRegister,
         onLogout,
-        clearLocalStorage
+        clearAuthFromLocalStorage
     }
 
     return (<AuthContext.Provider value={authContext}>

@@ -44,6 +44,9 @@ export default function ShoppingCartProvider({ children }) {
     function showCart() {
         setIsOpen(true)
     }
+    function clearCartFromLocalStorage() {
+        setCart([]);
+    }
 
     const cartQuantity = cart.reduce((acc,item) => acc += item.quantity,0);
 
@@ -56,7 +59,8 @@ export default function ShoppingCartProvider({ children }) {
         getQuantityInCart,
         isOpen,
         showCart,
-        closeCart
+        closeCart,
+        clearCartFromLocalStorage
     }
 
     return <ShoppingCartContext.Provider value={context}>

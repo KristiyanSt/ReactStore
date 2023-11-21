@@ -13,8 +13,10 @@ export default function AlertProvider({ children }) {
 
         setTimeout(() => {
             setShowAlert(false);
+            setMessageInfo({});
         }, 3000);
         //maybe clear messageInfo afterall
+        
     }
     const value = {
         showAlert,

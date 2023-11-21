@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react"
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../contexts/AuthContext.js';
-import productService from "../services/productService.js";
-import productsReducer from "../reducers/productsReducer.js";
+import { createContext, useContext, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from '../contexts/AuthContext.js'
+import productService from "../services/productService.js"
 import { AlertContext } from "./AlertContext.js"
+import { usePage } from "../hooks/usePage.js"
 
 const pageSize = 4;
 export const ProductsContext = createContext();
@@ -11,17 +11,32 @@ export const ProductsContext = createContext();
 export default function ProductsProvider({ children }) {
     const navigate = useNavigate();
     const { setLoading, showMessage } = useContext(AlertContext);
+    const { user, clearAuthFromLocalStorage } = useContext(AuthContext);
+    // const { products, dispatch, setPage, page, productsCount, setProductsCount } = useProducts();
+    
+    const [products, setProducts] = useState([]);
+    const {
+        page,
+        pages,
+        setPage,
+        offset,
+        setProductsCount,
+        incrementPage,
+        decrementPage
+    } = usePage(4);
 
-    const { user, clearLocalStorage } = useContext(AuthContext);
-    const { products, dispatch, setPage, page, productsCount, setProductsCount } = useProducts();
 
-    async function onEdit(productId, values) {
+    // const [page, setPage] = useState(0);
+    // const [productsCount, setProductsCount] = useState(0);
+
+    async function onEdit(id, values) {
         //TODO handle 404 not found
-        setLoading(true);
         try {
-            const product = await productService.editProduct(productId, values, user.accessToken);
-            dispatch({ type: 'EDIT_PRODUCT', payload: product });
-            navigate('/products/details/' + productId);
+            setLoading(true);
+            const edited = await productService.editProduct(id, values, user.accessToken);
+            // dispatch({ type: 'EDIT_PRODUCT', payload: product });
+            showMessage(`Successfully edited ${edited.name}`);
+            navigate('/products');
         } catch (err) {
             showMessage(err.message, 'danger');
         } finally {
@@ -30,12 +45,15 @@ export default function ProductsProvider({ children }) {
     }
     async function onDelete(id) {
         //TODO handle 404 not found
-        setLoading(true);
-        try {
-            await productService.deleteProduct(id, user.accessToken);
-            dispatch({ type: 'DELETE_PRODUCT', payload: id });
-            navigate('/');
 
+        try {
+            setLoading(true);
+            await productService.deleteProduct(id, user.accessToken);
+            // dispatch({ type: 'DELETE_PRODUCT', payload: id });
+            if (products.length === 1) {
+                decrementPage(1);
+            }
+            navigate('/products');
         } catch (err) {
             showMessage(err.message, 'danger');
         } finally {
@@ -46,14 +64,18 @@ export default function ProductsProvider({ children }) {
         setLoading(true);
         try {
             const response = await productService.createProduct(values, user);
-            if(products.length < 4) {
-                dispatch({ type: 'CREATE_PRODUCT', payload: response });
-            }
-            setProductsCount(count => count + 1);
-            navigate(`/products/details/${response._id}`);
+            // if(products.length < 4) {
+            //     dispatch({ type: 'CREATE_PRODUCT', payload: response });
+            // }
+            // setProductsCount(count => count + 1);
+            if (products.length == 4) {
+                incrementPage(1);
+            } //OR USE useSearchParams and increment page in navigate function
+            navigate(`/products`);
         } catch (err) {
+            console.log(err);
             if (err.status == 403) {
-                clearLocalStorage();
+                clearAuthFromLocalStorage();
                 showMessage('Invalid credentials, please log in !', 'danger');
             }
             navigate('/login');
@@ -64,46 +86,21 @@ export default function ProductsProvider({ children }) {
 
     const context = {
         products,
+        setProducts,
         onEdit,
         onCreate,
         onDelete,
-        setPage,
         page,
-        productsCount
+        setPage,
+        pages,
+        offset,
+        setProductsCount,
+        incrementPage,
+        decrementPage
     }
 
     return <ProductsContext.Provider value={context}>
         {children}
     </ProductsContext.Provider>
 }
-
-function useProducts() {
-
-    const [products, dispatch] = useReducer(productsReducer, []);
-    // const [products,setProducts]= useState([]);
-    const [page, setPage] = useState(0);
-    const [productsCount, setProductsCount] = useState(0);
-
-    useEffect(() => {
-
-        productService.getAll(page,pageSize)
-            .then(products => {
-                // setProducts(products);
-                dispatch({ type: 'PRODUCTS_FETCH', payload: products })
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
-
-        productService.getProductsCount()
-            .then(count => setProductsCount(count))
-            .catch(err => {
-                console.log(err.message);
-            });
-
-    }, [page]);
-
-    return { products, dispatch, setPage, page, productsCount };
-}
-
 

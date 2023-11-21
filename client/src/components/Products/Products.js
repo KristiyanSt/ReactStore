@@ -1,14 +1,49 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { Col, Row } from "react-bootstrap"
 import ProductCard from "./ProductCard.js";
 import Pagination from 'react-bootstrap/Pagination';
+import productService from "../../services/productService.js";
+import { useSearchParams } from "react-router-dom";
+
+const pageSize = 4;
 
 export default function Products() {
 
-    const { products, setPage, page, productsCount } = useContext(ProductsContext);
+    const { products,
+        setProducts,
+        page,
+        setPage,
+        pages,
+        offset,
+        setProductsCount,
+        incrementPage,
+        decrementPage } = useContext(ProductsContext);
 
-    const pages = Math.ceil(productsCount / 4);
+    // const pages = Math.ceil(productsCount / pageSize);
+
+    const [params, setSearchParams] = useSearchParams();
+    useEffect(() => {
+        setPage(Number(params.get('page')) || 0)
+    }, [])
+    console.log(params.get('page'))
+
+    useEffect(() => {
+        productService.getAll(offset)
+            .then(products => {
+                setProducts(products);
+            })
+            .catch(err => {
+                console.log(err.message);
+            });
+
+        productService.getProductsCount()
+            .then(count => setProductsCount(count))
+            .catch(err => {
+                console.log(err.message);
+            });
+
+    }, [offset]);
 
     return <div>
         {products.length == 0
@@ -26,12 +61,12 @@ export default function Products() {
                 </Row>
                 <Pagination>
                     {page !== 0
-                        && <Pagination.Item onClick={() => setPage(page - 1)} >Prev</Pagination.Item>}
+                        && <Pagination.Item onClick={() => setSearchParams({ page: page - 1 })} >Prev</Pagination.Item>}
 
                     <Pagination.Item active>{page + 1} </Pagination.Item>
 
                     {page + 1 < pages
-                        && <Pagination.Item onClick={() => setPage(page + 1)}>Next</Pagination.Item>}
+                        && <Pagination.Item onClick={() => setSearchParams({ page: page + 1 })}>Next</Pagination.Item>}
                 </Pagination>
             </>
         }
