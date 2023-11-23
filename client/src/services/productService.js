@@ -5,14 +5,14 @@ const PRODUCTS_PAGE_SIZE = 4;
 
 const request = requester();
 
-async function getAll(offset) {
+async function getAll(page) {
     // if(query) {
     //     let queryString = '?where=' 
     //     const queryArr = Object.entries(query).map(([field, value]) => encodeURIComponent(`${field}="${value}"`));
     //     queryString += queryArr.join(encodeURIComponent(' AND '))
     //     return request.get(endpoints.all + queryString);
     // }
-
+    const offset = page * PRODUCTS_PAGE_SIZE;
     const query = `?offset=${offset}&pageSize=${PRODUCTS_PAGE_SIZE}`
     return request.get(URL + query);
 }

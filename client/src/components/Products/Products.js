@@ -6,30 +6,30 @@ import Pagination from 'react-bootstrap/Pagination';
 import productService from "../../services/productService.js";
 import { useSearchParams } from "react-router-dom";
 
-const pageSize = 4;
+const PRODUCTS_PAGE_SIZE = 4;
 
 export default function Products() {
 
-    const { products,
-        setProducts,
-        page,
-        setPage,
-        pages,
-        offset,
-        setProductsCount,
-        incrementPage,
-        decrementPage } = useContext(ProductsContext);
+    // const { products,
+    //     setProducts,
+    //     page,
+    //     setPage,
+    //     pages,
+    //     offset,
+    //     setProductsCount,
+    //     incrementPage,
+    //     decrementPage } = useContext(ProductsContext);
 
-    // const pages = Math.ceil(productsCount / pageSize);
+    const [products, setProducts] = useState([]);
+    const [productsCount, setProductsCount] = useState(null);
+    const [pages, setPages] = useState(0);
 
-    const [params, setSearchParams] = useSearchParams();
+    const [params, setSearchParams] = useSearchParams({ page: 1 });
+    const page = Number(params.get('page')) - 1;
+
     useEffect(() => {
-        setPage(Number(params.get('page')) || 0)
-    }, [])
-    console.log(params.get('page'))
-
-    useEffect(() => {
-        productService.getAll(offset)
+        //TODO handle invalid page
+        productService.getAll(page)
             .then(products => {
                 setProducts(products);
             })
@@ -43,7 +43,11 @@ export default function Products() {
                 console.log(err.message);
             });
 
-    }, [offset]);
+    }, [params]);
+
+    useEffect(() => {
+        setPages(Math.ceil(productsCount / PRODUCTS_PAGE_SIZE));
+    }, [productsCount]);
 
     return <div>
         {products.length == 0
@@ -59,14 +63,19 @@ export default function Products() {
                         <ProductCard product={p} />
                     </Col>)}
                 </Row>
-                <Pagination>
+                <Pagination className="float-end mt-3 me-4" variant="dark">
                     {page !== 0
-                        && <Pagination.Item onClick={() => setSearchParams({ page: page - 1 })} >Prev</Pagination.Item>}
-
-                    <Pagination.Item active>{page + 1} </Pagination.Item>
-
+                        && <Pagination.Item  onClick={() => setSearchParams({ page: Number(params.get('page')) - 1 })} >Previous</Pagination.Item>}
+                    {Array.from({ length: pages }).map((page, index) => {
+                        return <Pagination.Item
+                            key={index}
+                            active={index + 1 == Number(params.get('page'))}
+                            onClick={() => setSearchParams({ page: index + 1 })} >
+                            {index + 1}
+                        </Pagination.Item>
+                    })}
                     {page + 1 < pages
-                        && <Pagination.Item onClick={() => setSearchParams({ page: page + 1 })}>Next</Pagination.Item>}
+                        && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) + 1 })}>Next</Pagination.Item>}
                 </Pagination>
             </>
         }

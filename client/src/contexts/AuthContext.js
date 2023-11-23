@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const result = await authService.login(values);
 
-            if (result.code === 403) {
+            if (result.status === 403) {
                 throw new Error('Invalid email or password !');
             }
 
@@ -33,7 +33,10 @@ export const AuthProvider = ({ children }) => {
             });
             navigate('/');
         } catch (err) {
-            showMessage(err.message, 'danger');
+            if (err.status === 403) {
+                // throw new Error('Invalid email or password !');
+                showMessage('Invalid email or password !', 'danger');
+            }
         } finally {
             setLoading(false);
         }

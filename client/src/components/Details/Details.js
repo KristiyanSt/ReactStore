@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import { ProductsContext } from "../../contexts/ProductsCtx.js";
 import { AuthContext } from "../../contexts/AuthContext.js";
@@ -8,12 +8,15 @@ import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js";
 import DeleteConfirm from "./DeleteConfirm.js";
 import { Rating } from 'react-simple-star-rating'
 import ratingService from "../../services/ratingService.js";
+import { AlertContext } from "../../contexts/AlertContext.js";
 
 export default function Details() {
+    const navigate = useNavigate();
     const { id } = useParams();
 
+    const { setLoading, showMessage } = useContext(AlertContext);
+
     const { user } = useContext(AuthContext);
-    const { onDelete } = useContext(ProductsContext);
     const { increaseProductQuantity,
         decreaseProductQuantity,
         getQuantityInCart } = useContext(ShoppingCartContext);
@@ -22,6 +25,24 @@ export default function Details() {
     const [product, setProduct] = useState(null);
     const [rating, setRating] = useState(null);
     const [ratingsCount, setRatingsCount] = useState(0);
+
+    const onDelete = async (id) => {
+        //TODO handle 404 not found
+
+        try {
+            setLoading(true);
+            await productService.deleteProduct(id, user.accessToken);
+            // dispatch({ type: 'DELETE_PRODUCT', payload: id });
+            // if (products.length === 1) {
+            //     decrementPage(1);
+            // }
+            navigate(-1);
+        } catch (err) {
+            showMessage(err.message, 'danger');
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         // handle unauthorized
@@ -73,7 +94,7 @@ export default function Details() {
                                 flex-column" style={{ gap: '.5rem' }}>
                                     <div className="d-flex align-items-center 
                                                 justify-content-center" style={{ gap: '.5rem' }}>
-                                        <Button as={Link} to={`/products/edit/${product._id}`} variant="secondary">Edit</Button>
+                                        <Button as={Link} to={`/products/edit/${product._id}`} variant="success">Edit</Button>
                                         <Button as={Link} onClick={() => setIsConfirmOpen(true)} variant="danger">Delete</Button>
                                     </div>
                                 </div>
@@ -111,9 +132,8 @@ export default function Details() {
                         }
                     </Card.Body>
                     {user &&
-                        (user._id == product._ownerId
-                            ? null
-                            : <div className="container-fluid mb-2" >
+                        (user._id !== product._ownerId
+                            ? <div className="container-fluid mb-2" >
                                 <span className="fs-5">Rate this product :</span>
                                 <div>
                                     <Rating
@@ -124,9 +144,11 @@ export default function Details() {
                                         initialValue={rating || 0}
                                     />
                                 </div>
-                            </div>)
-                    }
-                </Card>}
+                            </div>
+                            : null)}
+                </Card>
+
+            }
             {/* <div className="w-25 mt-4 h-100" style={{ width: '700px' }}>
                 <span className="float-end"> ({ratingsCount}) ratings.</span>
                 <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>

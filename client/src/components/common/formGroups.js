@@ -35,14 +35,6 @@ export const registerGroups = [
         feedback: 'Username must be at least 2 characters long !'
     },
     {
-        controlId: "city",
-        label: "City",
-        type: "text",
-        name: "city",
-        placeholder: "Enter a city",
-        feedback: 'Please enter a city !'
-    },
-    {
         controlId: "password",
         label: "Password",
         type: "password",

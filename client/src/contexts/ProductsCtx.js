@@ -19,7 +19,7 @@ export default function ProductsProvider({ children }) {
         page,
         pages,
         setPage,
-        offset,
+        // offset,
         setProductsCount,
         incrementPage,
         decrementPage
@@ -93,7 +93,7 @@ export default function ProductsProvider({ children }) {
         page,
         setPage,
         pages,
-        offset,
+        // offset,
         setProductsCount,
         incrementPage,
         decrementPage
