@@ -16,35 +16,30 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useLocalStorage('auth');
 
     async function onLogin(values) {
-        setLoading(true);
         try {
+            setLoading(true);
             const result = await authService.login(values);
-
-            if (result.status === 403) {
-                throw new Error('Invalid email or password !');
-            }
-
-            showMessage('Successful login!');
             setUser({
                 _id: result._id,
                 accessToken: result.accessToken,
                 email: result.email,
                 username: result.username
             });
-            navigate('/');
+            showMessage('Successful login!');
+            return navigate('/');
         } catch (err) {
             if (err.status === 403) {
-                // throw new Error('Invalid email or password !');
-                showMessage('Invalid email or password !', 'danger');
+                return showMessage('Invalid email or password !', 'danger');
             }
+            return showMessage(err.message);
         } finally {
             setLoading(false);
         }
 
     }
     async function onRegister(values) {
-        setLoading(true);
         try {
+            setLoading(true);
             const result = await authService.register(values);
             showMessage('Successful registration!');
             setUser({
@@ -53,9 +48,10 @@ export const AuthProvider = ({ children }) => {
                 email: result.email,
                 username: result.username
             });
-            navigate('/');
+            showMessage('Successful registration!');
+            return navigate('/');
         } catch (err) {
-            showMessage(err.message, 'danger')
+            return showMessage(err.message, 'danger')
         } finally {
             setLoading(false);
         }
@@ -65,14 +61,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         try {
             await authService.logout(user.accessToken);
-            showMessage('Successful logout!');
+            clearAuthFromLocalStorage();
+            return showMessage('Successful logout!');
         } catch (err) {
-            showMessage(err.message, 'danger')
+            clearAuthFromLocalStorage();
+            return showMessage(err.message, 'danger')
         } finally {
             setLoading(false);
         }
-
-        clearAuthFromLocalStorage();
     }
 
     function clearAuthFromLocalStorage() {

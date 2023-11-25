@@ -8,7 +8,7 @@ const registerValidator = {
     city: (value) => value.trim() != "",
     password: (value) => value.trim() != "" && value.length > 5,
     confirmPassword: (value, currentValues) => value.trim() != "" &&
-                            value == currentValues.password &&
+                            value === currentValues.password &&
                             registerValidator.password(currentValues.password)
     
 }

@@ -1,24 +1,15 @@
 import { useContext, useEffect, useState } from "react"
-import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { Col, Row } from "react-bootstrap"
-import ProductCard from "./ProductCard.js";
-import Pagination from 'react-bootstrap/Pagination';
-import productService from "../../services/productService.js";
-import { useSearchParams } from "react-router-dom";
+import ProductCard from "./ProductCard.js"
+import Pagination from 'react-bootstrap/Pagination'
+import productService from "../../services/productService.js"
+import { useSearchParams } from "react-router-dom"
+import { AlertContext } from "../../contexts/AlertContext.js"
 
 const PRODUCTS_PAGE_SIZE = 4;
 
 export default function Products() {
-
-    // const { products,
-    //     setProducts,
-    //     page,
-    //     setPage,
-    //     pages,
-    //     offset,
-    //     setProductsCount,
-    //     incrementPage,
-    //     decrementPage } = useContext(ProductsContext);
+    const { showMessage } = useContext(AlertContext);
 
     const [products, setProducts] = useState([]);
     const [productsCount, setProductsCount] = useState(null);
@@ -26,24 +17,50 @@ export default function Products() {
 
     const [params, setSearchParams] = useSearchParams({ page: 1 });
     const page = Number(params.get('page')) - 1;
+    const productsPromise = productService.getAll(page);
+    const productsCountPromise = productService.getProductsCount();
 
-    useEffect(() => {
-        //TODO handle invalid page
-        productService.getAll(page)
-            .then(products => {
-                setProducts(products);
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
+    Promise.all([productsPromise, productsCountPromise])
+        .then(([products, productsCount]) => {
+            setProducts(products);
+            setProductsCount(productsCount)
+        })
+        .catch((err) => {
+            if (err.status !== 404) {
+                return showMessage(err.message);
+            }
+        })
+    // useEffect(() => {
+    //     const productsPromise = productService.getAll(page);
+    //     const productsCountPromise = productService.getProductsCount();
 
-        productService.getProductsCount()
-            .then(count => setProductsCount(count))
-            .catch(err => {
-                console.log(err.message);
-            });
+    //     Promise.all([productsPromise, productsCountPromise])
+    //         .then(([products, productsCount]) => {
+    //             setProducts(products);
+    //             setProductsCount(productsCount)
+    //         })
+    //         .catch((err) => {
+    //             if (err.status !== 404) {
+    //                 return showMessage(err.message);
+    //             }
+    //         })
+    //     // productService.getAll(page)
+    //     //     .then(products => {
+    //     //         return setProducts(products);
+    //     //     })
+    //     //     .catch(err => {
+    //     //         if(err.status !== 404){
+    //     //             return showMessage(err.message);
+    //     //         }
+    //     //     });
 
-    }, [params]);
+    //     // productService.getProductsCount()
+    //     //     .then(count => setProductsCount(count))
+    //     //     .catch(err => {
+    //     //         console.log(err.message);
+    //     //     });
+
+    // }, [page]);
 
     useEffect(() => {
         setPages(Math.ceil(productsCount / PRODUCTS_PAGE_SIZE));
@@ -65,7 +82,7 @@ export default function Products() {
                 </Row>
                 <Pagination className="float-end mt-3 me-4" variant="dark">
                     {page !== 0
-                        && <Pagination.Item  onClick={() => setSearchParams({ page: Number(params.get('page')) - 1 })} >Previous</Pagination.Item>}
+                        && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) - 1 })} >Previous</Pagination.Item>}
                     {Array.from({ length: pages }).map((page, index) => {
                         return <Pagination.Item
                             key={index}

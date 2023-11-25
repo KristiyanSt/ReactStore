@@ -4,7 +4,6 @@ import styles from './UserNav.module.css'
 
 export function UserNav({ showCart, cartQuantity }) {
     return <>
-        <Nav.Link as={Link} to="/products">Products</Nav.Link>
         <Nav.Link as={Link} to="/products/create">Create product</Nav.Link>
         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
         <Button onClick={showCart} variant="light" className={`rounded-circle ${styles['button-cart']}`} >

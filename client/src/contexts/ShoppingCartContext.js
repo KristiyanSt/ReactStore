@@ -1,16 +1,15 @@
-import { createContext, useContext, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage.js";
-import ShoppingCart from "../components/ShoppingCart/ShoppingCart.js";
-import { ProductsContext } from "./ProductsCtx.js";
+import { createContext, useContext, useEffect, useState } from "react"
+import useLocalStorage from "../hooks/useLocalStorage.js"
+import { AuthContext } from "./AuthContext.js";
 
 export const ShoppingCartContext = createContext();
 
 export default function ShoppingCartProvider({ children }) {
-
+    const { user} = useContext(AuthContext);
     const [cart, setCart] = useLocalStorage('cart', []);
     const [isOpen, setIsOpen] = useState(false);
 
-
+    
     function increaseProductQuantity(productId) {
 
         if (cart.some(x => x.productId == productId)) {
@@ -26,7 +25,7 @@ export default function ShoppingCartProvider({ children }) {
         if (cart.find(x => x.productId == productId).quantity == 1) {
             return setCart(cart.filter(x => x.productId != productId));
         }
-
+        
         return setCart(cart.map(x => x.productId == productId
             ? { ...x, quantity: x.quantity - 1 }
             : x
@@ -49,6 +48,12 @@ export default function ShoppingCartProvider({ children }) {
     }
 
     const cartQuantity = cart.reduce((acc,item) => acc += item.quantity,0);
+    
+    useEffect(() => {
+        if(!user) {
+            clearCartFromLocalStorage();
+        }
+    },[user]);
 
     const context = {
         cart,

@@ -1,14 +1,13 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Card } from "react-bootstrap";
-import { ProductsContext } from "../../contexts/ProductsCtx.js";
-import { AuthContext } from "../../contexts/AuthContext.js";
-import productService from "../../services/productService.js";
-import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js";
-import DeleteConfirm from "./DeleteConfirm.js";
+import { useContext, useEffect, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { Button, Card } from "react-bootstrap"
+import { AuthContext } from "../../contexts/AuthContext.js"
+import productService from "../../services/productService.js"
+import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
+import DeleteConfirm from "./DeleteConfirm.js"
 import { Rating } from 'react-simple-star-rating'
-import ratingService from "../../services/ratingService.js";
-import { AlertContext } from "../../contexts/AlertContext.js";
+import ratingService from "../../services/ratingService.js"
+import { AlertContext } from "../../contexts/AlertContext.js"
 
 export default function Details() {
     const navigate = useNavigate();
@@ -16,7 +15,7 @@ export default function Details() {
 
     const { setLoading, showMessage } = useContext(AlertContext);
 
-    const { user } = useContext(AuthContext);
+    const { user, clearAuthFromLocalStorage } = useContext(AuthContext);
     const { increaseProductQuantity,
         decreaseProductQuantity,
         getQuantityInCart } = useContext(ShoppingCartContext);
@@ -24,50 +23,63 @@ export default function Details() {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [product, setProduct] = useState(null);
     const [rating, setRating] = useState(null);
-    const [ratingsCount, setRatingsCount] = useState(0);
 
     const onDelete = async (id) => {
-        //TODO handle 404 not found
-
         try {
             setLoading(true);
             await productService.deleteProduct(id, user.accessToken);
-            // dispatch({ type: 'DELETE_PRODUCT', payload: id });
-            // if (products.length === 1) {
-            //     decrementPage(1);
-            // }
-            navigate(-1);
+            return navigate(-1);
         } catch (err) {
-            showMessage(err.message, 'danger');
+            if (err.status === 403) {
+                clearAuthFromLocalStorage();
+                navigate('/login');
+                return showMessage('Invalid credentials, please log in', 'danger');
+            }else if( err.status === 404) {
+                return navigate('/not-found')
+            }
+            return showMessage(err.message);
         } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
-        // handle unauthorized
-        Promise.all([
-            productService.getProductById(id),
-            ratingService.getUserRating(id, user?._id),
-            ratingService.getRatingsCountById(id)
-        ]).then(([
-            product,
-            ratingData,
-            ratingsCount
-        ]) => {
-            setProduct(product);
-            if (ratingData.length !== 0) {
-                setRating(ratingData[0].rating);
+        //TODO LOADING
+        productService.getProductById(id)
+            .then(setProduct)
+            .catch((err) => {
+                if (err.status === 404) {
+                    navigate('/not-found')
+                }
+            });
+    }, [id]);
+
+    useEffect(() => {
+        if (product) {
+            if (user && product._ownerId !== user._id) {
+                ratingService.getUserRating(id, user?._id)
+                    .then((ratingData) => {
+                        if (ratingData.length !== 0) {
+                            setRating(ratingData[0].rating);
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                    });
             }
-            setRatingsCount(ratingsCount);
-        });
-    }, []);
+        }
+    }, [product])
 
     const onRatingClick = (rating) => {
         ratingService.rateProduct(product._id, rating, user.accessToken)
             .then(data => {
-                setRating(data.rating);
-                setRatingsCount(prevCount => prevCount + 1);
+                return setRating(data.rating);
+            }).catch((err) => {
+                if (err.status == 403) {
+                    clearAuthFromLocalStorage();
+                    navigate('/login');
+                    return showMessage('Invalid credentials, please log in', 'danger');
+                }
+                return showMessage(err.message);
             });
     }
 
@@ -149,14 +161,6 @@ export default function Details() {
                 </Card>
 
             }
-            {/* <div className="w-25 mt-4 h-100" style={{ width: '700px' }}>
-                <span className="float-end"> ({ratingsCount}) ratings.</span>
-                <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-                <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-                <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-                <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-                <div className="shadow-lg p-4 mb-4 bg-white">Large shadow</div>
-            </div> */}
             <DeleteConfirm
                 isOpen={isConfirmOpen}
                 onDelete={() => onDelete(product?._id)}

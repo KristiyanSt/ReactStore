@@ -1,5 +1,4 @@
 import { useContext } from "react"
-import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { AlertContext } from "../../contexts/AlertContext.js"
 import useForm from "../../hooks/useForm.js"
 import { Button, Form } from "react-bootstrap"
@@ -9,6 +8,7 @@ import FormGroup from "../common/FormGroup.js"
 import { AuthContext } from "../../contexts/AuthContext.js"
 import productService from "../../services/productService.js"
 import { useNavigate } from "react-router-dom"
+import useValidate from "../../hooks/useValidate.js"
 
 
 export default function Create() {
@@ -16,11 +16,11 @@ export default function Create() {
     const navigate = useNavigate();
 
     const { isLoading, setLoading, showMessage } = useContext(AlertContext);
-    const { user, clearAuthFromLocalStorage} = useContext(AuthContext);
+    const { user, clearAuthFromLocalStorage } = useContext(AuthContext);
 
     const onCreate = async (values) => {
-        setLoading(true);
         try {
+            setLoading(true);
             const response = await productService.createProduct(values, user);
             // if(products.length < 4) {
             //     dispatch({ type: 'CREATE_PRODUCT', payload: response });
@@ -30,14 +30,15 @@ export default function Create() {
             //     incrementPage(1);
             // } 
             //OR USE useSearchParams and increment page in navigate function
-            navigate(`/products`);
+            return navigate(`/products`);
         } catch (err) {
-            console.log(err);
             if (err.status == 403) {
                 clearAuthFromLocalStorage();
                 showMessage('Invalid credentials, please log in !', 'danger');
+                return navigate('/login');
             }
-            navigate('/login');
+            showMessage(err.message);
+            return navigate('/');
         } finally {
             setLoading(false);
         }
@@ -45,10 +46,13 @@ export default function Create() {
     const initialValues = { name: "", price: "", quantity: "", imageUrl: "" };
 
     const { values,
-        validationErrors,
         onChange,
-        onBlur,
-        formHandler } = useForm(initialValues, onCreate, productValidator);
+        formHandler } = useForm(initialValues, onCreate);
+
+    const {
+        validationErrors,
+        onBlur
+    } = useValidate(initialValues, values, productValidator);
 
     const disabled = Object.values(validationErrors).some(x => x) ||
         Object.values(validationErrors).some(x => x === "") ||

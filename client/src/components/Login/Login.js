@@ -7,6 +7,7 @@ import useForm from "../../hooks/useForm.js"
 import FormGroup from "../common/FormGroup.js"
 import { loginGroups } from "../common/formGroups.js"
 import { loginValidator } from "../common/validators.js"
+import useValidate from "../../hooks/useValidate.js"
 
 export default function Login() {
     const { onLogin } = useContext(AuthContext);
@@ -15,10 +16,12 @@ export default function Login() {
     const initialValues = { email: "", password: "" };
 
     const { values,
-        validationErrors,
         onChange,
-        onBlur,
-        formHandler } = useForm(initialValues, onLogin, loginValidator);
+        formHandler } = useForm(initialValues, onLogin);
+    const {
+        validationErrors,
+        onBlur
+    } = useValidate(initialValues, values, loginValidator);
 
     const disabled = Object.values(validationErrors).some(x => x) ||
         Object.values(validationErrors).some(x => x === "") ||

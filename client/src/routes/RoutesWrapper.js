@@ -10,6 +10,8 @@ import PrivateRoute from "../components/PrivateRoute.js"
 import Logout from "../components/Logout/Logout.js"
 import Profile from "../components/Profile.js"
 import Products from "../components/Products/Products.js"
+import NotFound from "../components/NotFound.js/NotFound.js";
+
 
 
 export default function RoutesWrapper() {
@@ -18,12 +20,13 @@ export default function RoutesWrapper() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/products/create" element={<Create />} />
         <Route path="/products/details/:id" element={<Details />} />
-        <Route path="/products/edit/:id" element={<Edit />} />
         <Route element={<PrivateRoute />} >
+            <Route path="/products/create" element={<Create />} />
+            <Route path="/products/edit/:id" element={<Edit />} />
             <Route path='/logout' element={<Logout />} />
             <Route path="/profile" element={<Profile />} />
         </Route>
+        <Route path="*" element={<NotFound />}></Route>
     </Routes>
 }

@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ProductsContext } from "../../contexts/ProductsCtx.js"
 import { AlertContext } from "../../contexts/AlertContext.js"
 import { Button, Form } from "react-bootstrap"
 import useForm from "../../hooks/useForm.js"
@@ -9,25 +8,30 @@ import { productValidator } from "../common/validators.js"
 import FormGroup from "../common/FormGroup.js"
 import { productFormGroups } from "../common/formGroups.js"
 import { AuthContext } from "../../contexts/AuthContext.js"
+import useValidate from "../../hooks/useValidate.js"
 
 export default function Edit() {
-    //TODO check if user is author of the record
     const navigate = useNavigate();
 
     const { isLoading, setLoading, showMessage } = useContext(AlertContext);
-    const { user } = useContext(AuthContext);
+    const { user, clearAuthFromLocalStorage } = useContext(AuthContext);
     const { id } = useParams();
 
     const onEdit = async (values) => {
-        //TODO handle 404 not found
         try {
             setLoading(true);
             const edited = await productService.editProduct(id, values, user.accessToken);
-            // dispatch({ type: 'EDIT_PRODUCT', payload: product });
             showMessage(`Successfully edited ${edited.name}`);
-            navigate('/products');
+            return navigate(-1);
         } catch (err) {
-            showMessage(err.message, 'danger');
+            if (err.status === 403) {
+                clearAuthFromLocalStorage();
+                navigate('/login');
+                return showMessage('Invalid credentials, please log in', 'danger');
+            } else if (err.status === 404) {
+                return navigate('/not-found');
+            }
+            return showMessage(err.message, 'danger');
         } finally {
             setLoading(false);
         }
@@ -41,21 +45,37 @@ export default function Edit() {
     };
 
     const { values,
-        validationErrors,
         onChange,
-        onBlur,
         formHandler,
-        setValues } = useForm(initialValues, onEdit, productValidator);
+        setValues } = useForm(initialValues, onEdit);
+
+    const {
+        validationErrors,
+        onBlur
+    } = useValidate(initialValues, values, productValidator);
 
     useEffect(() => {
         productService.getProductById(id)
-            .then(result => setValues({
-                name: result.name,
-                price: result.price,
-                imageUrl: result.imageUrl,
-                quantity: result.quantity
-            }));
-    }, []);
+            .then(result => {
+                if (user._id !== result._ownerId) {
+                    throw new Error('You are unauthorized')
+                }
+                return setValues({
+                    name: result.name,
+                    price: result.price,
+                    imageUrl: result.imageUrl,
+                    quantity: result.quantity
+                });
+            })
+            .catch((err) => {
+                if (err.status === 404) {
+                    return navigate('/not-found')
+                }
+                showMessage(err.message, 'danger');
+                return navigate('/');
+
+            });
+    }, [id]);
 
     const disabled = Object.values(validationErrors).some(x => x) ||
         isLoading;

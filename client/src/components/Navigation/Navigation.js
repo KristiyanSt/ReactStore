@@ -16,8 +16,9 @@ export default function Navigation() {
         <Container>
             <Navbar.Brand as={Link} to="/">ReactStore</Navbar.Brand>
             <Nav>
+                <Nav.Link as={Link} to="/products">Products</Nav.Link>
                 {!user && <GuestNav />}
-                {user && <UserNav showCart={showCart} cartQuantity={cartQuantity}/>}
+                {user && <UserNav showCart={showCart} cartQuantity={cartQuantity} />}
             </Nav>
         </Container>
     </Navbar>
