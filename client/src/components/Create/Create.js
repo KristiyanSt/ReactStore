@@ -1,14 +1,14 @@
 import { useContext } from "react"
-import { AlertContext } from "../../contexts/AlertContext.js"
-import useForm from "../../hooks/useForm.js"
 import { Button, Form } from "react-bootstrap"
-import { productFormGroups } from "../common/formGroups.js"
-import { productValidator } from "../common/validators.js"
 import FormGroup from "../common/FormGroup.js"
+import { AlertContext } from "../../contexts/AlertContext.js"
 import { AuthContext } from "../../contexts/AuthContext.js"
-import productService from "../../services/productService.js"
 import { useNavigate } from "react-router-dom"
+import useForm from "../../hooks/useForm.js"
 import useValidate from "../../hooks/useValidate.js"
+import productService from "../../services/productService.js"
+import { productFormGroups } from "../../common/formGroups.js"
+import { productValidator } from "../../common/validators.js"
 
 
 export default function Create() {
@@ -22,22 +22,17 @@ export default function Create() {
         try {
             setLoading(true);
             const response = await productService.createProduct(values, user);
-            // if(products.length < 4) {
-            //     dispatch({ type: 'CREATE_PRODUCT', payload: response });
-            // }
-            // setProductsCount(count => count + 1);
-            // if (products.length == 4) {
-            //     incrementPage(1);
-            // } 
-            //OR USE useSearchParams and increment page in navigate function
             return navigate(`/products`);
         } catch (err) {
             if (err.status == 403) {
                 clearAuthFromLocalStorage();
                 showMessage('Invalid credentials, please log in !', 'danger');
                 return navigate('/login');
+            } else if(err.status === 401) {
+                showMessage('You don\'t have permission for this action !','danger')
+                return navigate('/');
             }
-            showMessage(err.message);
+            showMessage(err.message,'danger');
             return navigate('/');
         } finally {
             setLoading(false);

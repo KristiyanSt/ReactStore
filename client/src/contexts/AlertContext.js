@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState } from "react"
 
 export const AlertContext = createContext();
 
@@ -15,12 +15,9 @@ export default function AlertProvider({ children }) {
             setShowAlert(false);
             setMessageInfo({});
         }, 3000);
-        //maybe clear messageInfo afterall
-        
     }
     const value = {
         showAlert,
-        // setShowAlert,
         messageInfo,
         showMessage,
         isLoading,

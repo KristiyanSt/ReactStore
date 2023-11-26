@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import { AuthContext } from "./AuthContext.js"
 import useLocalStorage from "../hooks/useLocalStorage.js"
-import { AuthContext } from "./AuthContext.js";
 
 export const ShoppingCartContext = createContext();
 

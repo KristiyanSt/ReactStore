@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext} from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import useLocalStorage from '../hooks/useLocalStorage.js';
-import authService from '../services/authService.js';
-import { AlertContext } from './AlertContext.js';
+import { AlertContext } from './AlertContext.js'
+import useLocalStorage from '../hooks/useLocalStorage.js'
+import authService from '../services/authService.js'
 
 export const AuthContext = createContext();
 
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const { showMessage } = useContext(AlertContext);
-    const { isLoading, setLoading } = useContext(AlertContext);
+    const { setLoading } = useContext(AlertContext);
 
     const [user, setUser] = useLocalStorage('auth');
 
@@ -23,15 +23,16 @@ export const AuthProvider = ({ children }) => {
                 _id: result._id,
                 accessToken: result.accessToken,
                 email: result.email,
-                username: result.username
+                username: result.username,
+                roles: result.roles || []
             });
             showMessage('Successful login!');
-            return navigate('/');
+            navigate('/');
         } catch (err) {
             if (err.status === 403) {
                 return showMessage('Invalid email or password !', 'danger');
             }
-            return showMessage(err.message);
+            showMessage(err.message);
         } finally {
             setLoading(false);
         }
@@ -49,9 +50,9 @@ export const AuthProvider = ({ children }) => {
                 username: result.username
             });
             showMessage('Successful registration!');
-            return navigate('/');
+            navigate('/');
         } catch (err) {
-            return showMessage(err.message, 'danger')
+            showMessage(err.message, 'danger')
         } finally {
             setLoading(false);
         }
@@ -62,10 +63,9 @@ export const AuthProvider = ({ children }) => {
         try {
             await authService.logout(user.accessToken);
             clearAuthFromLocalStorage();
-            return showMessage('Successful logout!');
+            showMessage('Successful logout!');
         } catch (err) {
             clearAuthFromLocalStorage();
-            return showMessage(err.message, 'danger')
         } finally {
             setLoading(false);
         }

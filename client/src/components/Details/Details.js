@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Button, Card } from "react-bootstrap"
-import { AuthContext } from "../../contexts/AuthContext.js"
-import productService from "../../services/productService.js"
-import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
-import DeleteConfirm from "./DeleteConfirm.js"
 import { Rating } from 'react-simple-star-rating'
-import ratingService from "../../services/ratingService.js"
+import DeleteConfirm from "./DeleteConfirm.js"
+import { AuthContext } from "../../contexts/AuthContext.js"
 import { AlertContext } from "../../contexts/AlertContext.js"
+import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
+import productService from "../../services/productService.js"
+import ratingService from "../../services/ratingService.js"
 
 export default function Details() {
     const navigate = useNavigate();
@@ -34,10 +34,11 @@ export default function Details() {
                 clearAuthFromLocalStorage();
                 navigate('/login');
                 return showMessage('Invalid credentials, please log in', 'danger');
-            }else if( err.status === 404) {
+            } else if (err.status === 404) {
                 return navigate('/not-found')
             }
             return showMessage(err.message);
+
         } finally {
             setLoading(false);
         }
@@ -49,8 +50,9 @@ export default function Details() {
             .then(setProduct)
             .catch((err) => {
                 if (err.status === 404) {
-                    navigate('/not-found')
+                    return navigate('/not-found')
                 }
+                showMessage(err.message,'danger')
             });
     }, [id]);
 
@@ -63,7 +65,7 @@ export default function Details() {
                             setRating(ratingData[0].rating);
                         }
                     }).catch((err) => {
-                        console.error(err);
+                        showMessage(err.message, 'danger');
                     });
             }
         }

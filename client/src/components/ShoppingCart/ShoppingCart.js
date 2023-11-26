@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
-import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
 import { Offcanvas, Stack } from "react-bootstrap"
 import CartItem from "./CartItem.js"
+import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
 import productService from "../../services/productService.js"
 
 

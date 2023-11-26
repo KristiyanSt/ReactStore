@@ -1322,7 +1322,8 @@
         users: {
             "35c62d76-8152-4626-8712-eeb96381bea8": {
                 email: "peter@abv.bg",
-                hashedPassword: "83313014ed3e2391aa1332615d2f053cf5c1bfe05ca1cbcb5582443822df6eb1"
+                hashedPassword: "83313014ed3e2391aa1332615d2f053cf5c1bfe05ca1cbcb5582443822df6eb1",
+		roles: ['admin']
             },
             "847ec027-f659-4086-8032-5173e2f9c93a": {
                 email: "john@abv.bg",
@@ -1333,45 +1334,163 @@
         }
     };
     var seedData = {
-        pets: {
-            "ff436770-76c5-40e2-b231-77409eda7a61": {
-                "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
-                "name": "Max",
-                "breed": "Shiba Inu",
-                "age": "2 years",
-                "weight": "5kg",
-                "image": "../images/Shiba-Inu.png",
-                "_createdOn": 1617194128618
-            },
-            "1840a313-225c-416a-817a-9954d4609f7c": {
-                "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
-                "name": "Athena",
-                "breed": "American Curl",
-                "age": "1 year",
-                "weight": "3kg",
-                "image": "../images/cat2.jpg",
-                "_createdOn": 1617194210928
-            },
-            "126777f5-3277-42ad-b874-76d043b069cb": {
-                "_ownerId": "847ec027-f659-4086-8032-5173e2f9c93a",
-                "name": "Apollo",
-                "breed": "Pug",
-                "age": "3 years",
-                "weight": "4kg",
-                "image": "../images/dog2.jpg",
-                "_createdOn": 1617194295474
-            },
-            "136777f5-3277-42ad-b874-76d043b069cb": {
-                "_ownerId": "847ec027-f659-4086-8032-5173e2f9c93a",
-                "name": "Chibi",
-                "breed": "Teddy guinea pig",
-                "age": "1 years",
-                "weight": "1kg",
-                "image": "../images/guinea-pig.jpg",
-                "_createdOn": 1617194295480
-            }
-        },
-        donation: {}
+        products: {
+	"ba097354-29c8-4776-a8e3-97e44a08f04e": {
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Cabinet",
+        "price": "70",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/31198578/resize-h755-w755%5Ecompr-r85/2439/243951889/Abdusalam+4-Door+Accent+Corner+Cabinet.jpg",
+        "_createdOn": 1701012413828,
+        "_id": "ba097354-29c8-4776-a8e3-97e44a08f04e"
+    },
+    "0b97ab05-0040-466b-8f1d-95a3e7339366": {
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "TV Stand",
+        "price": "90",
+        "quantity": "2",
+        "imageUrl": "https://assets.wfcdn.com/im/57709560/resize-h755-w755%5Ecompr-r85/9987/99870217/Lorraine+TV+Stand+for+TVs+up+to+60%22.jpg",
+        "_createdOn": 1701012469511,
+        "_id": "0b97ab05-0040-466b-8f1d-95a3e7339366"
+    },
+    "aee86d15-0213-438d-96c4-97ec36ad7a43" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "1-Door Cabinet",
+        "price": "30",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/41303055/resize-h755-w755%5Ecompr-r85/1583/158314965/Painswick+1+-+Door+Accent+Cabinet.jpg",
+        "_createdOn": 1701012534977,
+        "_id": "aee86d15-0213-438d-96c4-97ec36ad7a43"
+    },
+    "bb331505-0a5f-415d-9287-4ac1276f9c3d" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Bookshelf",
+        "price": "60",
+        "quantity": "3",
+        "imageUrl": "https://assets.wfcdn.com/im/42964557/resize-h755-w755%5Ecompr-r85/2560/256000964/Bookcase.jpg",
+        "_createdOn": 1701012629605,
+        "_id": "bb331505-0a5f-415d-9287-4ac1276f9c3d"
+    },
+    "b847ce06-68c1-472b-a831-2b7c7b7f2f83" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Bed ",
+        "price": "300",
+        "quantity": "6",
+        "imageUrl": "https://assets.wfcdn.com/im/08441836/resize-h755-w755%5Ecompr-r85/2524/252433811/Michiharu+Upholstered+Platform+Bed+with+Wingback.jpg",
+        "_createdOn": 1701012805280,
+        "_id": "b847ce06-68c1-472b-a831-2b7c7b7f2f83"
+    },
+    "ae68234a-b52b-430d-ad09-8004dfb1c127" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Nightstand",
+        "price": "39",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/02530743/resize-h755-w755%5Ecompr-r85/2171/217188139/Targo+Nightstands+With+Led+Lights+And+Usb+Ports.jpg",
+        "_createdOn": 1701012853726,
+        "_id": "ae68234a-b52b-430d-ad09-8004dfb1c127"
+    },
+    "d0352f7a-43f8-4b73-9d03-f7bc191c5133" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Drawer",
+        "price": "59",
+        "quantity": "2",
+        "imageUrl": "https://assets.wfcdn.com/im/89404988/resize-h755-w755%5Ecompr-r85/2205/220545386/Allyannah+6+-+Drawer+Dresser.jpg",
+        "_createdOn": 1701012903289,
+        "_id": "d0352f7a-43f8-4b73-9d03-f7bc191c5133"
+    },
+    "f3549fde-b46a-4cb7-8a70-9e8ed49d08bb" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Kitchen Island",
+        "price": "69",
+        "quantity": "1",
+        "imageUrl": "https://assets.wfcdn.com/im/24382721/resize-h755-w755%5Ecompr-r85/2354/235437381/Allycia+Kitchen+Island.jpg",
+        "_createdOn": 1701013133151,
+        "_id": "f3549fde-b46a-4cb7-8a70-9e8ed49d08bb"
+    },
+    "929faef1-34e4-4b97-9aab-1b2700fa1541" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Sofa",
+        "price": "120",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/67350695/resize-h755-w755%5Ecompr-r85/1274/127469087/Garren+75.6%27%27+Square+Arm+Tufted+Sofa.jpg",
+        "_createdOn": 1701013206966,
+        "_id": "929faef1-34e4-4b97-9aab-1b2700fa1541"
+    },
+    "c3f34d93-cfd7-45bf-bb10-41c308b8d47d" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Coffee Table",
+        "price": "39",
+        "quantity": "7",
+        "imageUrl": "https://assets.wfcdn.com/im/35166780/resize-h755-w755%5Ecompr-r85/2610/261046143/Gulkis+Farmhouse+Square+Storage+Coffee+Table+with+Hinged+Lift+Top+for+Living+Room.jpg",
+        "_createdOn": 1701013249521,
+        "_id": "c3f34d93-cfd7-45bf-bb10-41c308b8d47d"
+    },
+    "971b3424-3ebe-47f5-91fc-1c1dd7d467db" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Desk",
+        "price": "40",
+        "quantity": "3",
+        "imageUrl": "https://assets.wfcdn.com/im/61382975/resize-h755-w755%5Ecompr-r85/2512/251207287/Jarnagin+Desk.jpg",
+        "_createdOn": 1701013333127,
+        "_id": "971b3424-3ebe-47f5-91fc-1c1dd7d467db"
+    },
+    "86254944-c3bb-4829-846e-19b5ca56c1f7" :{
+        "name": "Bathroom Vanity",
+        "price": "79",
+        "imageUrl": "https://assets.wfcdn.com/im/44961293/resize-h755-w755%5Ecompr-r85/2574/257460251/Amariani+60%22+Double+Bathroom+Vanity+Base+Only.jpg",
+        "quantity": "6",
+        "_createdOn": 1701013485185,
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "_updatedOn": 1701013518389,
+        "_id": "86254944-c3bb-4829-846e-19b5ca56c1f7"
+    },
+    "01698fb3-abee-499a-863f-091cba926140" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Ceiling Fan",
+        "price": "29",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/22550156/resize-h755-w755%5Ecompr-r85/2521/252102843/Figen+65%27%27+Ceiling+Fan+with+LED+Lights.jpg",
+        "_createdOn": 1701013583035,
+        "_id": "01698fb3-abee-499a-863f-091cba926140"
+    },
+    "9a438f1b-0736-46a1-b4d2-62ac0e8e1fe7" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Clothes Rack",
+        "price": "20",
+        "quantity": "2",
+        "imageUrl": "https://assets.wfcdn.com/im/10472980/resize-h755-w755%5Ecompr-r85/1174/117464215/Demetri+Metal+Adjustable+Rolling+Clothes+Rack.jpg",
+        "_createdOn": 1701013669992,
+        "_id": "9a438f1b-0736-46a1-b4d2-62ac0e8e1fe7"
+    },
+    "5b16ff68-109b-4915-af9e-f5ef6cd1ab44" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Wardrobe",
+        "price": "89",
+        "quantity": "4",
+        "imageUrl": "https://assets.wfcdn.com/im/57790924/resize-h755-w755%5Ecompr-r85/2596/259689859/Apollonios+4+Doors+Wardrobe+With+2+Drawers+and+Shelves.jpg",
+        "_createdOn": 1701013703915,
+        "_id": "5b16ff68-109b-4915-af9e-f5ef6cd1ab44"
+    },
+    "822b4138-f70a-470d-81ea-8a2c0b0cdc5d" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Gas Fireplace",
+        "price": "400",
+        "quantity": "2",
+        "imageUrl": "https://assets.wfcdn.com/im/21093621/resize-h755-w755%5Ecompr-r85/1439/143984711/32.25%27%27+W+Ventless+Stove.jpg",
+        "_createdOn": 1701013805370,
+        "_id": "822b4138-f70a-470d-81ea-8a2c0b0cdc5d"
+    },
+    "bdfa1709-4a95-47b6-9045-7766134a3295" :{
+        "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
+        "name": "Mail Organizer",
+        "price": "50",
+        "quantity": "1",
+        "imageUrl": "https://assets.wfcdn.com/im/04026506/resize-h755-w755%5Ecompr-r85/5761/5761064/E-Z+Sort%C2%AE+Literature+Organizer.jpg",
+        "_createdOn": 1701013933988,
+        "_id": "bdfa1709-4a95-47b6-9045-7766134a3295"
+    }
+
+	}
     };
     var rules$1 = {
         users: {

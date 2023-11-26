@@ -1,5 +1,5 @@
-import { Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import { Card } from "react-bootstrap"
 
 export default function ProductCard({
     product
@@ -9,8 +9,8 @@ export default function ProductCard({
         <Card.Img
             variant="top"
             src={product.imageUrl}
-            height="200px"
-            style={{ objectFit: "cover" }}
+            height="300px"
+            style={{ objectFit: "contain" }}
         />
         <Card.Body className="d-flex flex-column">
             <Card.Title

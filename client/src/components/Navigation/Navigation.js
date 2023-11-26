@@ -1,10 +1,10 @@
 import { useContext } from "react"
-import { AuthContext } from "../../contexts/AuthContext.js"
+import { Link } from "react-router-dom"
 import { Container, Nav, Navbar } from 'react-bootstrap'
+import { AuthContext } from "../../contexts/AuthContext.js"
 import { ShoppingCartContext } from "../../contexts/ShoppingCartContext.js"
 import { GuestNav } from "./GuestNav.js"
 import { UserNav } from "./UserNav.js"
-import { Link } from "react-router-dom"
 
 
 export default function Navigation() {
@@ -18,7 +18,10 @@ export default function Navigation() {
             <Nav>
                 <Nav.Link as={Link} to="/products">Products</Nav.Link>
                 {!user && <GuestNav />}
-                {user && <UserNav showCart={showCart} cartQuantity={cartQuantity} />}
+                {user && <UserNav 
+                showCart={showCart} 
+                cartQuantity={cartQuantity} 
+                isAdmin={user.roles?.includes('admin')}/>}
             </Nav>
         </Container>
     </Navbar>

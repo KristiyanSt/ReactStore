@@ -1,6 +1,5 @@
 const host = 'http://localhost:3030'
 
-// todo error handling with fake accesstoken
 
 async function request(method, url, body, token) {
     const options = {
@@ -20,7 +19,9 @@ async function request(method, url, body, token) {
         return null;
     }
     if(!response.ok) {
-        throw response;
+        const error = await response.json();
+        error.status = response.status;
+        throw error;
     }
     return response.json();
 

@@ -2,9 +2,12 @@ import { Link } from "react-router-dom"
 import { Button, Nav, NavDropdown } from "react-bootstrap"
 import styles from './UserNav.module.css'
 
-export function UserNav({ showCart, cartQuantity }) {
+export function UserNav({ showCart, cartQuantity, isAdmin }) {
+
     return <>
-        <Nav.Link as={Link} to="/products/create">Create product</Nav.Link>
+        {isAdmin 
+        ? <Nav.Link as={Link} to="/products/create">Create product</Nav.Link>
+        : null}
         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
         <Button onClick={showCart} variant="light" className={`rounded-circle ${styles['button-cart']}`} >
             <svg xmlns="http://www.w3.org/2000/svg" height="1.25em" viewBox="0 0 576 512">

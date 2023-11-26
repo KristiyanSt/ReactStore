@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react"
 import { Col, Row } from "react-bootstrap"
-import ProductCard from "./ProductCard.js"
-import Pagination from 'react-bootstrap/Pagination'
-import productService from "../../services/productService.js"
 import { useSearchParams } from "react-router-dom"
+import Pagination from 'react-bootstrap/Pagination'
+import ProductCard from "./ProductCard.js"
 import { AlertContext } from "../../contexts/AlertContext.js"
+import productService from "../../services/productService.js"
+import { PRODUCTS_PAGE_SIZE } from "../../constants/constants.js"
 
-const PRODUCTS_PAGE_SIZE = 4;
 
 export default function Products() {
     const { showMessage } = useContext(AlertContext);
@@ -17,50 +17,22 @@ export default function Products() {
 
     const [params, setSearchParams] = useSearchParams({ page: 1 });
     const page = Number(params.get('page')) - 1;
-    const productsPromise = productService.getAll(page);
-    const productsCountPromise = productService.getProductsCount();
+    
+    useEffect(() => {
+        const productsPromise = productService.getAll(page);
+        const productsCountPromise = productService.getProductsCount();
 
-    Promise.all([productsPromise, productsCountPromise])
-        .then(([products, productsCount]) => {
-            setProducts(products);
-            setProductsCount(productsCount)
-        })
-        .catch((err) => {
-            if (err.status !== 404) {
-                return showMessage(err.message);
-            }
-        })
-    // useEffect(() => {
-    //     const productsPromise = productService.getAll(page);
-    //     const productsCountPromise = productService.getProductsCount();
-
-    //     Promise.all([productsPromise, productsCountPromise])
-    //         .then(([products, productsCount]) => {
-    //             setProducts(products);
-    //             setProductsCount(productsCount)
-    //         })
-    //         .catch((err) => {
-    //             if (err.status !== 404) {
-    //                 return showMessage(err.message);
-    //             }
-    //         })
-    //     // productService.getAll(page)
-    //     //     .then(products => {
-    //     //         return setProducts(products);
-    //     //     })
-    //     //     .catch(err => {
-    //     //         if(err.status !== 404){
-    //     //             return showMessage(err.message);
-    //     //         }
-    //     //     });
-
-    //     // productService.getProductsCount()
-    //     //     .then(count => setProductsCount(count))
-    //     //     .catch(err => {
-    //     //         console.log(err.message);
-    //     //     });
-
-    // }, [page]);
+        Promise.all([productsPromise, productsCountPromise])
+            .then(([products, productsCount]) => {
+                setProducts(products);
+                setProductsCount(productsCount)
+            })
+            .catch((err) => {
+                if (err.status !== 404) {
+                    return showMessage(err.message);
+                }
+            });
+    }, [page]);
 
     useEffect(() => {
         setPages(Math.ceil(productsCount / PRODUCTS_PAGE_SIZE));

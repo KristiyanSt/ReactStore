@@ -1,16 +1,15 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom"
 
 import Home from "../components/Home/Home.js"
-import Edit from "../components/Edit/Edit.js"
 import Login from "../components/Login/Login.js"
-import Details from "../components/Details/Details.js"
 import Register from "../components/Register/Register.js"
-import Create from "../components/Create/Create.js"
-import PrivateRoute from "../components/PrivateRoute.js"
-import Logout from "../components/Logout/Logout.js"
-import Profile from "../components/Profile.js"
 import Products from "../components/Products/Products.js"
-import NotFound from "../components/NotFound.js/NotFound.js";
+import Details from "../components/Details/Details.js"
+import PrivateRoute from "../components/PrivateRoute/PrivateRoute.js"
+import Create from "../components/Create/Create.js"
+import Edit from "../components/Edit/Edit.js"
+import Logout from "../components/Logout/Logout.js"
+import NotFound from "../components/NotFound.js/NotFound.js"
 
 
 
@@ -25,7 +24,6 @@ export default function RoutesWrapper() {
             <Route path="/products/create" element={<Create />} />
             <Route path="/products/edit/:id" element={<Edit />} />
             <Route path='/logout' element={<Logout />} />
-            <Route path="/profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<NotFound />}></Route>
     </Routes>

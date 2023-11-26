@@ -1,4 +1,5 @@
-const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+import { EMAIL_REGEX } from "../constants/constants.js"
+
 
 const registerValidator = {
     //must be correct to pass validation

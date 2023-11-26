@@ -1,13 +1,13 @@
 import { useContext } from "react"
 import { Link } from "react-router-dom"
+import { Button, Form } from "react-bootstrap"
+import FormGroup from "../common/FormGroup.js"
 import { AuthContext } from "../../contexts/AuthContext.js"
 import { AlertContext } from "../../contexts/AlertContext.js"
-import { Button, Form } from "react-bootstrap"
 import useForm from "../../hooks/useForm.js"
-import FormGroup from "../common/FormGroup.js"
-import { registerGroups } from "../common/formGroups.js"
-import { registerValidator } from "../common/validators.js"
 import useValidate from "../../hooks/useValidate.js"
+import { registerGroups } from "../../common/formGroups.js"
+import { registerValidator } from "../../common/validators.js"
 
 export default function Register() {
     const { onRegister } = useContext(AuthContext);
