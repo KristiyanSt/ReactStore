@@ -9,7 +9,6 @@ import Navigation from './components/Navigation/Navigation.js'
 import ShoppingCart from './components/ShoppingCart/ShoppingCart.js'
 import Alert from './components/Alert/Alert.js'
 import RoutesWrapper from './routes/RoutesWrapper.js'
-import Spinner from './components/Spinner/Spinner.js'
 import Footer from './components/Footer/Footer.js'
 import Error from './components/Error/Error.js'
 
@@ -28,7 +27,6 @@ function App() {
                   <ShoppingCart />
                   <Alert />
                   <RoutesWrapper />
-                  <Spinner />
                 </ShoppingCartProvider>
               </AuthProvider>
             </AlertProvider>

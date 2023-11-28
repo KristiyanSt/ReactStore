@@ -11,13 +11,13 @@ import { PRODUCTS_PAGE_SIZE } from "../../constants/constants.js"
 export default function Products() {
     const { showMessage } = useContext(AlertContext);
 
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(null);
     const [productsCount, setProductsCount] = useState(null);
     const [pages, setPages] = useState(0);
 
     const [params, setSearchParams] = useSearchParams({ page: 1 });
     const page = Number(params.get('page')) - 1;
-    
+
     useEffect(() => {
         const productsPromise = productService.getAll(page);
         const productsCountPromise = productService.getProductsCount();
@@ -28,9 +28,7 @@ export default function Products() {
                 setProductsCount(productsCount)
             })
             .catch((err) => {
-                if (err.status !== 404) {
-                    return showMessage(err.message);
-                }
+                showMessage(err.message, 'danger');
             });
     }, [page]);
 
@@ -38,35 +36,34 @@ export default function Products() {
         setPages(Math.ceil(productsCount / PRODUCTS_PAGE_SIZE));
     }, [productsCount]);
 
+    if (!products) {
+        return null;
+    }
+    if (products.length == 0) {
+        return <span className="d-flex justify-content-center fw-bold mt-4">
+            Currently there are no products to display!
+        </span>
+    }
     return <div>
-        {products.length == 0
-            ? <span className="d-flex justify-content-center
-                     fw-bold mt-4">
-                Currently there are no products to display!
-            </span>
-
-            : <>
-                <Row xs={2} md={3} lg={4} className="g-2">
-                    {products.map(p => <Col
-                        key={p._id}>
-                        <ProductCard product={p} />
-                    </Col>)}
-                </Row>
-                <Pagination className="float-end mt-3 me-4" variant="dark">
-                    {page !== 0
-                        && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) - 1 })} >Previous</Pagination.Item>}
-                    {Array.from({ length: pages }).map((page, index) => {
-                        return <Pagination.Item
-                            key={index}
-                            active={index + 1 == Number(params.get('page'))}
-                            onClick={() => setSearchParams({ page: index + 1 })} >
-                            {index + 1}
-                        </Pagination.Item>
-                    })}
-                    {page + 1 < pages
-                        && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) + 1 })}>Next</Pagination.Item>}
-                </Pagination>
-            </>
-        }
+        <Row xs={2} md={3} lg={4} className="g-2">
+            {products.map(p => <Col
+                key={p._id}>
+                <ProductCard product={p} />
+            </Col>)}
+        </Row>
+        <Pagination className="float-end mt-3 me-4" variant="dark">
+            {page !== 0
+                && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) - 1 })} >Previous</Pagination.Item>}
+            {Array.from({ length: pages }).map((page, index) => {
+                return <Pagination.Item
+                    key={index}
+                    active={index + 1 == Number(params.get('page'))}
+                    onClick={() => setSearchParams({ page: index + 1 })} >
+                    {index + 1}
+                </Pagination.Item>
+            })}
+            {page + 1 < pages
+                && <Pagination.Item onClick={() => setSearchParams({ page: Number(params.get('page')) + 1 })}>Next</Pagination.Item>}
+        </Pagination>
     </div>
 }

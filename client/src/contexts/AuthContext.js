@@ -1,4 +1,4 @@
-import { createContext, useContext} from 'react'
+import { createContext, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { AlertContext } from './AlertContext.js'
@@ -10,9 +10,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
-    const { showMessage } = useContext(AlertContext);
-    const { setLoading } = useContext(AlertContext);
-
+    const { showMessage, setLoading } = useContext(AlertContext);
     const [user, setUser] = useLocalStorage('auth');
 
     async function onLogin(values) {
@@ -32,7 +30,7 @@ export const AuthProvider = ({ children }) => {
             if (err.status === 403) {
                 return showMessage('Invalid email or password !', 'danger');
             }
-            showMessage(err.message);
+            showMessage(err.message, 'danger');
         } finally {
             setLoading(false);
         }
@@ -57,10 +55,9 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     }
-
     async function onLogout() {
-        setLoading(true);
         try {
+            setLoading(true);
             await authService.logout(user.accessToken);
             clearAuthFromLocalStorage();
             showMessage('Successful logout!');
@@ -70,7 +67,6 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     }
-
     function clearAuthFromLocalStorage() {
         setUser(undefined);
     }

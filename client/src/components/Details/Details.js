@@ -65,7 +65,7 @@ export default function Details() {
                             setRating(ratingData[0].rating);
                         }
                     }).catch((err) => {
-                        showMessage(err.message, 'danger');
+                        console.error(err);
                     });
             }
         }
