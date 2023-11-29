@@ -5,6 +5,7 @@ This project is a web application for shopping purposes built with ReactJS
 # Getting started
 
 1.Clone the repository
+
 2.Go to client directory and install depencencies
 
 ```bash
@@ -18,7 +19,7 @@ This project is a web application for shopping purposes built with ReactJS
     cd server
     node server.js
 ```
-3.Start the client
+4.Start the client
 
 ```bash
     cd client
@@ -29,7 +30,7 @@ This project is a web application for shopping purposes built with ReactJS
 * Details page for specific product with a interface for adding to shopping cart and rating the product
 * Login for signing in 
 * Register for creating an account
-* Create/Edit/Delete pages for product maintaining and processing
+* Create/Edit/Delete pages for product managing and processing
 
 # Roles
 
@@ -46,7 +47,7 @@ There are three roles within the system:
 3.Guest
 * Guest has access to reading data about products.
 
-* Testing is possible with credentials listed below: 
+**Testing** is possible with credentials listed below: 
 
 **Admin**: 
 ```bash
@@ -58,10 +59,10 @@ john@abv.bg : 123456
 ```
 
 # Client data persistence
--Shopping cart 
+**Shopping cart**
 * Data about id and quantity of each product is stored in an array in local storage 
 
--User data
+**User data**
 * Personal user information is stored in an object in local storage 
 
 
